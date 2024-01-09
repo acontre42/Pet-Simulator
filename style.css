@@ -1,0 +1,14 @@
+html {
+    background-color: rgb(203, 249, 249);
+}
+
+#header {
+    text-align: center;
+    width: 100%;
+}
+
+footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
