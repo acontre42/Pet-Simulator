@@ -19,6 +19,7 @@ const funP = document.getElementById("fun");
 // Other
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
+const petSelect = document.getElementById("pet-select");
 // CSS Style
 const STYLE_UNCLICKABLE = "cursor: default; text-decoration: line-through;";
 const STYLE_CLICKABLE = "cursor: pointer; text-decoration: none;";
