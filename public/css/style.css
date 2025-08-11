@@ -16,11 +16,7 @@ html {
     height: auto;
 }
 
-button {
-    font-family: 'Lucida Console';
-}
-
-select {
+button, select {
     font-family: 'Lucida Console';
 }
 
@@ -28,4 +24,14 @@ footer {
     width: 100%;
     position: absolute;
     bottom: 0;
+}
+
+#clickable {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#unclickable {
+    cursor: default;
+    text-decoration: line-through;
 }
