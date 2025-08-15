@@ -15,6 +15,11 @@ export default class Pet {
             return false;
         }
     }
+    #correctNeedValue(value) { // Return value within [MIN_NEEDS, MAX_NEEDS] to ensure needs stay within range.
+        if (value > MAX_NEEDS) { return MAX_NEEDS; }
+        else if (value < MIN_NEEDS) { return MIN_NEEDS; }
+        else { return value; }
+    }
     // Public:
     constructor() {
         this.hunger = STARTER_NEEDS.hunger;
@@ -57,12 +62,7 @@ export default class Pet {
             return null;
         }
         this.hunger += value;
-        if (this.hunger > MAX_NEEDS) {
-            this.hunger = MAX_NEEDS;
-        }
-        if (this.hunger < MIN_NEEDS) {
-            this.hunger = MIN_NEEDS;
-        }
+        this.hunger = this.#correctNeedValue(this.hunger);
         return this.hunger;
     }
     alterEnergy(value) {
@@ -70,12 +70,7 @@ export default class Pet {
             return null;
         }
         this.energy += value;
-        if (this.energy > MAX_NEEDS) {
-            this.energy = MAX_NEEDS;
-        }
-        if (this.energy < MIN_NEEDS) {
-            this.energy = MIN_NEEDS;
-        }
+        this.energy = this.#correctNeedValue(this.energy);
         return this.energy;
     }
     alterBladder(value) {
@@ -83,12 +78,7 @@ export default class Pet {
             return null;
         }
         this.bladder += value;
-        if (this.bladder > MAX_NEEDS) {
-            this.bladder = MAX_NEEDS;
-        }
-        if (this.bladder < MIN_NEEDS) {
-            this.bladder = MIN_NEEDS;
-        }
+        this.bladder = this.#correctNeedValue(this.bladder);
         return this.bladder;
     }
     alterHygiene(value) {
@@ -96,12 +86,7 @@ export default class Pet {
             return null;
         }
         this.hygiene += value;
-        if (this.hygiene > MAX_NEEDS) {
-            this.hygiene = MAX_NEEDS;
-        }
-        if (this.hygiene < MIN_NEEDS) {
-            this.hygiene = MIN_NEEDS;
-        }
+        this.hygiene = this.#correctNeedValue(this.hygiene);
         return this.hygiene;
     }
     alterSocial(value) {
@@ -109,12 +94,7 @@ export default class Pet {
             return null;
         }
         this.social += value;
-        if (this.social > MAX_NEEDS) {
-            this.social = MAX_NEEDS;
-        }
-        if (this.social < MIN_NEEDS) {
-            this.social = MIN_NEEDS;
-        }
+        this.social = this.#correctNeedValue(this.social);
         return this.social;
     }
     alterFun(value) {
@@ -122,12 +102,7 @@ export default class Pet {
             return null;
         }
         this.fun += value;
-        if (this.fun > MAX_NEEDS) {
-            this.fun = MAX_NEEDS;
-        }
-        if (this.fun < MIN_NEEDS) {
-            this.fun = MIN_NEEDS;
-        }
+        this.fun = this.#correctNeedValue(this.fun);
         return this.fun;
     }
 }
