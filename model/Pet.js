@@ -22,6 +22,7 @@ export default class Pet {
     }
     // Public:
     constructor() {
+        this.name = "Toby";
         this.hunger = STARTER_NEEDS.hunger;
         this.energy = STARTER_NEEDS.energy;
         this.bladder = STARTER_NEEDS.bladder;
@@ -30,6 +31,7 @@ export default class Pet {
         this.fun = STARTER_NEEDS.fun;
     }
     // Getters
+    getName() { return this.name; }
     getHunger() { return this.hunger; }
     getEnergy() { return this.energy; }
     getBladder() { return this.bladder; }
@@ -50,6 +52,15 @@ export default class Pet {
         return all;
     }
     // Setters
+    setName(name) {
+        if (typeof name !== 'string' || name.length > 10 || !/[a-z]+/i.test(name)) {
+            return false;
+        }
+        else {
+            this.name = name;
+            return true;
+        }
+    }
     setHunger(value) { if (this.#isValidValue(value)) this.hunger = value; }
     setEnergy(value) { if (this.#isValidValue(value)) this.energy = value; }
     setBladder(value) { if (this.#isValidValue(value)) this.bladder = value; }

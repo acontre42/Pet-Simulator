@@ -5,6 +5,22 @@ describe('Testing Pet class methods', () => {
     const pet = new Pet();
     const {min, max} = pet.getAll();
 
+    test('Ensure that Pet only accepts names with at least one letter and no more than 10 characters', () => {
+        const name = pet.getName();
+        expect(pet.setName()).not.toBe(true);
+        expect(pet.setName('')).not.toBe(true);
+        expect(pet.setName('!')).not.toBe(true);
+        expect(pet.setName(5)).not.toBe(true);
+        expect(pet.setName('aaaaaaaaaaa')).not.toBe(true);
+        expect(pet.getName()).toBe(name);
+        expect(pet.setName('a')).toBe(true);
+        expect(pet.getName()).toBe('a');
+        expect(pet.setName('a!!!!!!6')).toBe(true);
+        expect(pet.getName()).toBe('a!!!!!!6');
+        expect(pet.setName('Alien')).toBe(true);
+        expect(pet.getName()).toBe('Alien');
+    });
+
     test('Ensure that passing non-numeric values to alter methods returns null and does not affect need values', () => {
         const bladder = pet.getBladder();
         expect(pet.alterBladder()).toBeNull();
