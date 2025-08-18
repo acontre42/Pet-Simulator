@@ -94,3 +94,65 @@ const FILL_INTERVALS = { // Will hold intervals for needs when being filled.
     pee: {},
     bathe: {}
 };
+
+const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
+    eat: 1500,
+    sleep: 5000,
+    pee: 2000,
+    bathe: 3000,
+    socialize: 1000,
+    play: 3000
+};
+
+const FILL_FUNCTIONS = { // Functions that fill needs
+    eat: function(value) { // *** TO DO: stop hunger decay, gradually fill hunger by value
+        pet.alterHunger(value);
+    },
+    sleep: function() {
+        clearInterval(DECAY_INTERVALS.energy); // Stop energy decay
+        FILL_INTERVALS.sleep = setInterval(() => { 
+            if (!pet.energyFilled()) { // Gradually fill energy need
+                pet.alterEnergy(1);
+            }
+            else { // Clear sleep interval and resume energy decay
+                wakeUp();
+            }
+        }, FILL_TIME.sleep);
+    },
+    pee: function() {
+        clearInterval(DECAY_INTERVALS.bladder); // Stop bladder decay
+        FILL_INTERVALS.pee = setInterval(() => {
+            if (!pet.bladderFilled()) { // Gradually fill bladder need
+                pet.alterBladder(1);
+            }
+            else { // Clear pee interval and resume bladder decay
+                clearInterval(FILL_INTERVALS.bladder);
+                DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder, DECAY_TIME.bladder);
+            }
+        }, FILL_TIME.bladder);
+    },
+    bathe: function() {
+        clearInterval(DECAY_INTERVALS.hygiene); // Stop hygiene decay
+        FILL_INTERVALS.bathe = setInterval(() => {
+            if (!pet.hygieneFilled()) { // Gradually fill hygiene need
+                pet.alterHygiene(1);
+            }
+            else { // Clear bathe interval and resume hygiene decay
+                clearInterval(FILL_INTERVALS.bathe);
+                DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene, DECAY_TIME.hygiene);
+            }
+        }, FILL_TIME.bathe);
+    },
+    socialize: function(value) { // *** TO DO: same as hunger
+       pet.alterSocial(value);
+    },
+    play: function(value) { // *** TO DO: same as hunger
+        pet.alterFun(value);
+    }
+}
+
+// Can be called by FILL_FUNCTIONS.sleep or by user
+function wakeUp() {
+    clearInterval(FILL_INTERVALS.sleep);
+    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy, DECAY_TIME.energy);
+}

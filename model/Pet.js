@@ -116,4 +116,7 @@ export default class Pet {
         this.fun = this.#correctNeedValue(this.fun);
         return this.fun;
     }
+    energyFilled() { return (this.energy == MAX_NEEDS); }
+    bladderFilled() { return (this.bladder == MAX_NEEDS); }
+    hygieneFilled() { return (this.hygiene == MAX_NEEDS); }
 }

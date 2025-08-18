@@ -64,4 +64,13 @@ describe('Testing Pet class methods', () => {
         pet.setHygiene((max + 1));
         expect(pet.getHygiene()).toBe(min);
     });
+
+    test('Testing functions that check if need is full', () => {
+        pet.setEnergy((max/2));
+        expect(pet.energyFilled()).toBe(false);
+        pet.setBladder((max - 1));
+        expect(pet.bladderFilled()).toBe(false);
+        pet.setHygiene(max);
+        expect(pet.hygieneFilled()).toBe(true);
+    });
 });

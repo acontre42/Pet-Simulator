@@ -26,110 +26,20 @@ const WAKE = -1, HUNGER = 0, ENERGY = 1, BLADDER = 2, HYGIENE = 3, SOCIAL = 4, F
 const NEED_CODES = [WAKE, HUNGER, ENERGY, BLADDER, HYGIENE, SOCIAL, FUN];
 const ONE_SEC = 1000, TWO_SEC = 2000, TWO_HALF_SEC = 2500, THIRTY_SEC = 30000, MINUTE  = 60000; // TIME
 
-// PET/NEED-SPECIFIC FUNCTIONS
-// Disable all buttons except "Wake Up", clear energyDecayInterval, gradually increase energy need to max.
-// If not interrupted, call wakeUp() when maxed out.
-function sleep() {
-    console.log("Goodnight!");
-    disableButtons();
-    enableSpecificButton(WAKE);
-    clearInterval(decayIntervals.energyDecayInterval);
-    needIntervals.sleepInterval = setInterval(() => {
-        if (pet.energy < MAX_NEEDS) {
-            pet.energy++;
-            updateEnergyP();
-        }
-        else {
-            wakeUp();
-        }
-    }, TWO_SEC);
-}
-
-// Re-enable buttons except "Wake Up", stop increasing energy variable by clearing sleepInterval.
-// Restart energyDecayInterval.
-function wakeUp() {
-    //***TO DO***
-    enableButtons();
-    disableSpecificButton(WAKE);
-    clearInterval(needIntervals.sleepInterval);
-    needIntervals.sleepInterval = {};
-    console.log("I'm up!");
-    decayIntervals.energyDecayInterval = setInterval(() => decayFunctions.energyDecay(), TWO_SEC); // ***TO DO***TWEAK TIME
-}
-
 // Increase hunger variable by food_value. Add delay based on food_value? If over max, set to max. Update hungerP (React?).
 function eat() {
     // ***TO DO*** disable buttons, run animation?, enable buttons
-    if (pet.hunger == MAX_NEEDS) {
-        alert("Your pet alien is stuffed!");
-    }
     let food_value = +foodSelect.value; // Unary + makes operand into a number
-    console.log(`${pet.hunger} + ${food_value} = ${pet.hunger + food_value}`);
-    let total = pet.hunger + food_value;
-    pet.hunger = total > MAX_NEEDS ? MAX_NEEDS : total;
-    updateHungerP();
-}
-// Clear hygieneDecayInterval. Increase hygiene variable by 1 every __ seconds. 
-// Stop when hygiene reaches max. Restart hygieneDecayInterval. Update hygieneP. (React?)
-function bathe() {
-    if (pet.hygiene == MAX_NEEDS) {
-        console.log("Already fresh");
-        return;
-    }
-
-    clearInterval(decayIntervals.hygieneDecayInterval);
-    decayIntervals.hygieneDecayInterval = {};
-
-    needIntervals.batheInterval = setInterval(() => {
-        if (pet.hygiene < MAX_NEEDS) {
-            pet.hygiene++;
-            updateHygieneP();
-        }
-        else {
-            clearInterval(needIntervals.batheInterval);
-            needIntervals.batheInterval = {};
-            console.log("Squeaky clean!");
-            decayIntervals.hygieneDecayInterval = setInterval(() => decayFunctions.hygieneDecay(), ONE_SEC); // ***TO DO*** TWEAK TIME
-        }
-    }, ONE_SEC);
-}
-// Clear bladderDecayInterval. Increase bladder variable by 1 every ___ seconds. 
-// Stop when maxed out. Restart bladderDecayInterval. Update bladderP (React?).
-function goBathroom() {
-    if (pet.bladder == MAX_NEEDS) {
-        console.log("Nothing to relieve.");
-        return;
-    }
-
-    clearInterval(decayIntervals.bladderDecayInterval);
-    decayIntervals.bladderDecayInterval = {};
-
-    needIntervals.peeInterval = setInterval(() => {
-        if (pet.bladder < MAX_NEEDS) {
-            pet.bladder++;
-            updateBladderP();
-        }
-        else {
-            clearInterval(needIntervals.peeInterval);
-            needIntervals.peeInterval = {};
-            console.log("-Toilet flush-");
-            decayIntervals.bladderDecayInterval = setInterval(() => decayFunctions.bladderDecay(), ONE_SEC); // ***TO DO*** TWEAK TIME
-        }
-    }, ONE_SEC);
 }
 // Increase social variable by social_value. Add delay based on social_value? If over max, set to max. Update socialP (React?).
 function socialize() {
     // ***TO DO***
     let social_value = +petSelect.value;
-    pet.social = pet.social + social_value > MAX_NEEDS ? MAX_NEEDS : pet.social + social_value;
-    updateSocialP();
 }
 // Increase fun variable by fun_value. Add delay based on fun_value. If over max, set to max. Update funP (React?).
 function play() {
     // ***TO DO***
     let fun_value = +playSelect.value;
-    pet.fun = pet.fun + fun_value > MAX_NEEDS ? MAX_NEEDS : pet.fun + fun_value;
-    updateFunP();
 }
 
 // Will end simulation if hunger stays at 0 too long. Disable all buttons, clear all intervals, alert user.
