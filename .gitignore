@@ -1,1 +1,5 @@
 *.txt
+*.dev
+
+# Dependency directories
+node_modules/

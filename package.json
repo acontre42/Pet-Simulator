@@ -1,0 +1,23 @@
+{
+  "name": "petsimulator",
+  "version": "1.0.0",
+  "description": "Pet simulation project",
+  "main": "pet2.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
+  },
+  "keywords": [
+    "pet",
+    "alien",
+    "simulation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^30.0.5"
+  },
+  "type": "module"
+}
