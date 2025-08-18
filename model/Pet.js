@@ -116,7 +116,17 @@ export default class Pet {
         this.fun = this.#correctNeedValue(this.fun);
         return this.fun;
     }
+    energyEmpty() { return (this.energy == MIN_NEEDS); }
+    hungerEmpty() { return (this.hunger == MIN_NEEDS); }
+    bladderEmpty() { return (this.bladder == MIN_NEEDS); }
+    hygieneLow() { return (this.hygiene < 4); }
+    socialEmpty() { return (this.social == MIN_NEEDS); }
+    funEmpty() { return (this.fun == MIN_NEEDS); }
     energyFilled() { return (this.energy == MAX_NEEDS); }
     bladderFilled() { return (this.bladder == MAX_NEEDS); }
     hygieneFilled() { return (this.hygiene == MAX_NEEDS); }
+    bladderFailure() {
+        this.bladder = MAX_NEEDS;
+        this.hygiene = MIN_NEEDS;
+    }
 }

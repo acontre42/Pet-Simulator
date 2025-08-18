@@ -2,7 +2,6 @@ import Pet from '../model/Pet.js';
 const pet = new Pet();
 
 const MAX_FAILURE_HUNGER = 10, MAX_FAILURE_ENERGY = 15, MAX_FAILURE_SOCIAL = 25, MAX_FAILURE_FUN = 5; // ***TO DO*** TWEAK
-const {min} = pet.getAll();
 
 const FAILURE_COUNTS = {
     hunger: 0,
@@ -31,7 +30,8 @@ const DECAY_INTERVALS = { // Holds intervals for decaying needs
 
 const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
     hunger: function() {
-        if (pet.alterHunger(-1) == min) {
+        pet.alterHunger(-1);
+        if (pet.hungerEmpty()) {
             FAILURE_COUNTS.hunger++;
             if (FAILURE_COUNTS.hunger == MAX_FAILURE_HUNGER) {
                 // *** TO DO: trigger hunger failure
@@ -42,7 +42,8 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         }
     },
     energy: function() {
-        if (pet.alterEnergy(-1) == min) {
+        pet.alterEnergy(-1);
+        if (pet.energyEmpty()) {
             FAILURE_COUNTS.energy++;
             if (FAILURE_COUNTS.energy == MAX_FAILURE_ENERGY) {
                 // *** TO DO: trigger energy failure
@@ -53,20 +54,20 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         }
     },
     bladder: function() {
-        if (pet.alterBladder(-1) == min) {
-            // *** TO DO: trigger bladder failure
-        }
-        else {
-            FAILURE_COUNTS.bladder = 0;
+        pet.alterBladder(-1);
+        if (pet.bladderEmpty()) {
+            pet.bladderFailure();
         }
     },
     hygiene: function() {
-        if (pet.alterHygiene(-1) < 3) {
+        pet.alterHygiene(-1);
+        if (pet.hygieneLow()) {
             // *** TO DO: trigger stinky
         }
     },
     social: function() {
-        if (pet.alterSocial(-1) == min) {
+        pet.alterSocial(-1);
+        if (pet.socialEmpty()) {
             FAILURE_COUNTS.social++;
             if (FAILURE_COUNTS.social == MAX_FAILURE_SOCIAL) {
                 // *** TO DO: trigger social failure
@@ -77,7 +78,8 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         }
     },
     fun: function() {
-        if (pet.alterFun(-1) == min) {
+        pet.alterFun(-1);
+        if (pet.funEmpty()) {
             FAILURE_COUNTS.fun++;
             if (FAILURE_COUNTS.fun == MAX_FAILURE_FUN) {
                 // *** TO DO: fun failure
@@ -90,9 +92,12 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
 };
 
 const FILL_INTERVALS = { // Will hold intervals for needs when being filled.
+    eat: {},
     sleep: {},
     pee: {},
-    bathe: {}
+    bathe: {},
+    socialize: {},
+    play: {}
 };
 
 const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
@@ -105,8 +110,19 @@ const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
 };
 
 const FILL_FUNCTIONS = { // Functions that fill needs
-    eat: function(value) { // *** TO DO: stop hunger decay, gradually fill hunger by value
-        pet.alterHunger(value);
+    eat: function(value) {
+        clearInterval(DECAY_INTERVALS.hunger); // Stop hunger decay
+        let food = value;
+        FILL_INTERVALS.eat = setInterval(() => { // Gradually fill hunger need while there is food remaining
+            if (food > 0) {
+                pet.alterHunger(1);
+                food--;
+            }
+            else {
+                clearInterval(FILL_INTERVALS.eat);
+                DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger, DECAY_TIME.hunger);
+            }
+        }, FILL_TIME.eat);
     },
     sleep: function() {
         clearInterval(DECAY_INTERVALS.energy); // Stop energy decay
@@ -143,11 +159,33 @@ const FILL_FUNCTIONS = { // Functions that fill needs
             }
         }, FILL_TIME.bathe);
     },
-    socialize: function(value) { // *** TO DO: same as hunger
-       pet.alterSocial(value);
+    socialize: function(value) { 
+        clearInterval(DECAY_INTERVALS.social); // Stop social need decay
+        let hangout = value;
+        FILL_INTERVALS.socialize = setInterval(() => { // Gradually fill social need while interaction remains
+            if (hangout > 0) {
+                pet.alterSocial(1);
+                hangout--;
+            }
+            else { // Clear socialize interval and resume social decay
+                clearInterval(FILL_INTERVALS.socialize);
+                DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social, DECAY_TIME.social);
+            }
+        }, FILL_TIME.socialize);
     },
-    play: function(value) { // *** TO DO: same as hunger
-        pet.alterFun(value);
+    play: function(value) { 
+        clearInterval(DECAY_INTERVALS.fun); // Stop fun need decay
+        let playtime = value;
+        FILL_INTERVALS.play = setInterval(() => { // Gradually fill fun need while playtime remains
+            if (playtime > 0) {
+                pet.alterFun(1);
+                playtime--;
+            }
+            else { // Clear play interval and resume fun decay
+                clearInterval(FILL_INTERVALS.play);
+                DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun, DECAY_TIME.fun);
+            }
+        }, FILL_TIME.play);
     }
 }
 
