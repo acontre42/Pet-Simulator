@@ -109,8 +109,11 @@ const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
     play: 3000
 };
 
-const FILL_FUNCTIONS = { // Functions that fill needs
+export const FILL_FUNCTIONS = { // Functions that fill needs
     eat: function(value) {
+        if (typeof value !== 'number') {
+            return false;
+        }
         clearInterval(DECAY_INTERVALS.hunger); // Stop hunger decay
         let food = value;
         FILL_INTERVALS.eat = setInterval(() => { // Gradually fill hunger need while there is food remaining
@@ -120,9 +123,10 @@ const FILL_FUNCTIONS = { // Functions that fill needs
             }
             else {
                 clearInterval(FILL_INTERVALS.eat);
-                DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger, DECAY_TIME.hunger);
+                DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
             }
         }, FILL_TIME.eat);
+        return true;
     },
     sleep: function() {
         clearInterval(DECAY_INTERVALS.energy); // Stop energy decay
@@ -143,7 +147,7 @@ const FILL_FUNCTIONS = { // Functions that fill needs
             }
             else { // Clear pee interval and resume bladder decay
                 clearInterval(FILL_INTERVALS.bladder);
-                DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder, DECAY_TIME.bladder);
+                DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
             }
         }, FILL_TIME.bladder);
     },
@@ -155,11 +159,14 @@ const FILL_FUNCTIONS = { // Functions that fill needs
             }
             else { // Clear bathe interval and resume hygiene decay
                 clearInterval(FILL_INTERVALS.bathe);
-                DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene, DECAY_TIME.hygiene);
+                DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
             }
         }, FILL_TIME.bathe);
     },
     socialize: function(value) { 
+        if (typeof value !== 'number') {
+            return false;
+        }
         clearInterval(DECAY_INTERVALS.social); // Stop social need decay
         let hangout = value;
         FILL_INTERVALS.socialize = setInterval(() => { // Gradually fill social need while interaction remains
@@ -169,11 +176,15 @@ const FILL_FUNCTIONS = { // Functions that fill needs
             }
             else { // Clear socialize interval and resume social decay
                 clearInterval(FILL_INTERVALS.socialize);
-                DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social, DECAY_TIME.social);
+                DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
             }
         }, FILL_TIME.socialize);
+        return true;
     },
     play: function(value) { 
+        if (typeof value !== 'number') {
+            return false;
+        }
         clearInterval(DECAY_INTERVALS.fun); // Stop fun need decay
         let playtime = value;
         FILL_INTERVALS.play = setInterval(() => { // Gradually fill fun need while playtime remains
@@ -183,14 +194,46 @@ const FILL_FUNCTIONS = { // Functions that fill needs
             }
             else { // Clear play interval and resume fun decay
                 clearInterval(FILL_INTERVALS.play);
-                DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun, DECAY_TIME.fun);
+                DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
             }
         }, FILL_TIME.play);
+        return true;
     }
 }
 
 // Can be called by FILL_FUNCTIONS.sleep or by user
-function wakeUp() {
+export function wakeUp() {
     clearInterval(FILL_INTERVALS.sleep);
-    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy, DECAY_TIME.energy);
+    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
+}
+
+export function getNeedsAsStrings() {
+    const info = pet.getAll();
+    const needs = {
+        hunger: `Hunger: ${info.hunger} / ${info.max}`,
+        energy: `Energy: ${info.energy} / ${info.max}`,
+        bladder: `Bladder: ${info.bladder} / ${info.max}`,
+        hygiene: `Hygiene: ${info.hygiene} / ${info.max}`,
+        social: `Social: ${info.social} / ${info.max}`,
+        fun: `Fun: ${info.fun} / ${info.max}`
+    };
+    return needs;
+}
+
+// Resumes all decay intervals
+function resumeAllDecay() {
+    pauseAllDecay(); // just in case
+    DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
+    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
+    DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
+    DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
+    DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
+    DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
+}
+
+// Pauses all decay intervals
+function pauseAllDecay() {
+    for (let interval in DECAY_INTERVALS) {
+        clearInterval(DECAY_INTERVALS[interval]);
+    }
 }
