@@ -20,27 +20,17 @@ const funP = document.getElementById("fun");
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
+
+// Event Listeners
+feedButton.addEventListener("click", eat);
+petButton.addEventListener("click", socialize);
+playButton.addEventListener("click", play);
+/*
 // JS
 // Pet & Pet Needs Related Variables
 const WAKE = -1, HUNGER = 0, ENERGY = 1, BLADDER = 2, HYGIENE = 3, SOCIAL = 4, FUN = 5; // CODES FOR SPECIFIC NEEDS
 const NEED_CODES = [WAKE, HUNGER, ENERGY, BLADDER, HYGIENE, SOCIAL, FUN];
 const ONE_SEC = 1000, TWO_SEC = 2000, TWO_HALF_SEC = 2500, THIRTY_SEC = 30000, MINUTE  = 60000; // TIME
-
-// Increase hunger variable by food_value. Add delay based on food_value? If over max, set to max. Update hungerP (React?).
-function eat() {
-    // ***TO DO*** disable buttons, run animation?, enable buttons
-    let food_value = +foodSelect.value; // Unary + makes operand into a number
-}
-// Increase social variable by social_value. Add delay based on social_value? If over max, set to max. Update socialP (React?).
-function socialize() {
-    // ***TO DO***
-    let social_value = +petSelect.value;
-}
-// Increase fun variable by fun_value. Add delay based on fun_value. If over max, set to max. Update funP (React?).
-function play() {
-    // ***TO DO***
-    let fun_value = +playSelect.value;
-}
 
 // Will end simulation if hunger stays at 0 too long. Disable all buttons, clear all intervals, alert user.
 function loss() {
@@ -146,33 +136,86 @@ function disableSpecificButton(needCode) {
 function runAnimation() {
     // ***TO DO***
 }
+*/
 
-// TEMPORARY UPDATE HTML FUNCTIONS (Replace with React Components?)
-function updateHungerP() {
-    hungerP.innerText = `Hunger: ${pet.hunger} / ${MAX_NEEDS}`;
+async function eat() {
+    // ***TO DO*** disable buttons, run animation?, enable buttons
+    let food_value = +foodSelect.value; // Unary + makes operand into a number
+    try {
+        const response = await fetch('/needs/eat', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({value: food_value})
+        });
+        const result = await response.json();
+        console.log(result);
+    }
+    catch (err) {
+        console.log('Error while attempting to feed pet')
+    }
 }
-function updateEnergyP() {
-    energyP.innerText = `Energy: ${pet.energy} / ${MAX_NEEDS}`;
+
+async function socialize() {
+    // ***TO DO*** disable buttons, run animation?, enable buttons
+    let social_value = +petSelect.value;
+    try {
+        const response = await fetch('/needs/socialize', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({value: social_value})
+        });
+        const result = await response.json();
+        console.log(result);
+    }
+    catch (err) {
+        console.log('Error while attempting to socialize with pet')
+    }
 }
-function updateBladderP() {
-    bladderP.innerText = `Bladder: ${pet.bladder} / ${MAX_NEEDS}`;
+
+async function play() {
+    // ***TO DO*** disable buttons, run animation?, enable buttons
+    let fun_value = +playSelect.value;
+    try {
+        const response = await fetch('/needs/play', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({value: fun_value})
+        });
+        const result = await response.json();
+        console.log(result);
+    }
+    catch (err) {
+        console.log('Error while attempting to socialize with pet')
+    }
 }
-function updateHygieneP() {
-    hygieneP.innerText = `Hygiene: ${pet.hygiene} / ${MAX_NEEDS}`;
-}
-function updateSocialP() {
-    socialP.innerText = `Social: ${pet.social} / ${MAX_NEEDS}`;
-}
-function updateFunP() {
-    funP.innerText = `Fun: ${pet.fun} / ${MAX_NEEDS}`;
+
+async function updateNeeds() {
+    try {
+        const response = await fetch('/needs', {
+            method: 'GET'
+        });
+        const data = await response.json();
+        const {hunger, energy, bladder, hygiene, social, fun} = data;
+        hungerP.innerText = hunger;
+        energyP.innerText = energy;
+        bladderP.innerText = bladder;
+        hygieneP.innerText = hygiene;
+        socialP.innerText = social;
+        funP.innerText = fun;
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 // MAIN
-enableButtons();
-disableSpecificButton(WAKE);
-hungerP.innerText = `Hunger: ${pet.hunger} / ${MAX_NEEDS}`;
-energyP.innerText = `Energy: ${pet.energy} / ${MAX_NEEDS}`;
-bladderP.innerText = `Bladder: ${pet.bladder} / ${MAX_NEEDS}`;
-hygieneP.innerText = `Hygiene: ${pet.hygiene} / ${MAX_NEEDS}`;
-socialP.innerText = `Social: ${pet.social} / ${MAX_NEEDS}`;
-funP.innerText = `Fun: ${pet.fun} / ${MAX_NEEDS}`;
+//enableButtons();
+//disableSpecificButton(WAKE);
+updateNeeds();
+const updateId = setInterval(() => updateNeeds(), 500);
