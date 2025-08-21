@@ -26,12 +26,7 @@ footer {
     bottom: 0;
 }
 
-#clickable {
-    cursor: pointer;
-    text-decoration: none;
-}
-
-#unclickable {
+.unclickable {
     cursor: default;
     text-decoration: line-through;
 }

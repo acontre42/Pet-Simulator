@@ -21,17 +21,98 @@ const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
 
-// Event Listeners
-feedButton.addEventListener("click", eat);
-petButton.addEventListener("click", socialize);
-playButton.addEventListener("click", play);
-/*
-// JS
-// Pet & Pet Needs Related Variables
+// Button-related Variables
 const WAKE = -1, HUNGER = 0, ENERGY = 1, BLADDER = 2, HYGIENE = 3, SOCIAL = 4, FUN = 5; // CODES FOR SPECIFIC NEEDS
 const NEED_CODES = [WAKE, HUNGER, ENERGY, BLADDER, HYGIENE, SOCIAL, FUN];
-const ONE_SEC = 1000, TWO_SEC = 2000, TWO_HALF_SEC = 2500, THIRTY_SEC = 30000, MINUTE  = 60000; // TIME
+const UNCLICKABLE = "unclickable";
 
+// Button Functionality-related Functions
+// Make all buttons unclickable. If an exception is provided, skip it.
+function disableButtons(exception) {
+    for (let i = 0; i < NEED_CODES.length; i++) {
+        if (NEED_CODES[i] === exception) {
+            continue;
+        }
+        disableSpecificButton(NEED_CODES[i]);
+    }
+}
+// Make all buttons clickable. If an exception is provided, skip it.
+function enableButtons(exception) {
+    for (let i = 0; i < NEED_CODES.length; i++) {
+        if (NEED_CODES[i] === exception) {
+            continue;
+        }
+        enableSpecificButton(NEED_CODES[i]);
+    }
+}
+// Enables only one specific button based on value of needCode. Changes button's style properties.
+function enableSpecificButton(needCode) {
+    switch (needCode) {
+        case WAKE:
+            wakeButton.addEventListener("click", wakeUp);
+            wakeButton.classList.remove(UNCLICKABLE);
+            break;
+        case HUNGER:
+            feedButton.addEventListener("click", eat);
+            feedButton.classList.remove(UNCLICKABLE);
+            break;
+        case ENERGY:
+            sleepButton.addEventListener("click", sleep);
+            sleepButton.classList.remove(UNCLICKABLE);
+            break;
+        case BLADDER:
+            bathroomButton.addEventListener("click", goBathroom);
+            bathroomButton.classList.remove(UNCLICKABLE);
+            break;
+        case HYGIENE:
+            batheButton.addEventListener("click", bathe);
+            batheButton.classList.remove(UNCLICKABLE);
+            break;
+        case SOCIAL:
+            petButton.addEventListener("click", socialize);
+            petButton.classList.remove(UNCLICKABLE);
+            break;
+        case FUN:
+            playButton.addEventListener("click", play);
+            playButton.classList.remove(UNCLICKABLE);
+            break;
+    }
+}
+// Disable only one specific button based on needCode. Changes button's style properties.
+function disableSpecificButton(needCode) {
+    switch (needCode) {
+        case WAKE:
+            wakeButton.removeEventListener("click", wakeUp);
+            wakeButton.classList.add(UNCLICKABLE);
+            break;
+        case HUNGER:
+            feedButton.removeEventListener("click", eat);
+            feedButton.classList.add(UNCLICKABLE);
+            break;
+        case ENERGY:
+            sleepButton.removeEventListener("click", sleep);
+            sleepButton.classList.add(UNCLICKABLE);
+            break;
+        case BLADDER:
+            bathroomButton.removeEventListener("click", goBathroom);
+            bathroomButton.classList.add(UNCLICKABLE);
+            break;
+        case HYGIENE:
+            batheButton.removeEventListener("click", bathe);
+            batheButton.classList.add(UNCLICKABLE);
+            break;
+        case SOCIAL:
+            petButton.removeEventListener("click", socialize);
+            petButton.classList.add(UNCLICKABLE);
+            break;
+        case FUN:
+            playButton.removeEventListener("click", play);
+            playButton.classList.add(UNCLICKABLE);
+            break;
+    }
+}
+
+/*
 // Will end simulation if hunger stays at 0 too long. Disable all buttons, clear all intervals, alert user.
 function loss() {
     // ***TO DO***
@@ -47,96 +128,17 @@ function loss() {
     alert("HE DEAD");
 }
 
-
-// Button-related Functions
-// Make all buttons unclickable
-function disableButtons() {
-    for (let i = 0; i < NEED_CODES.length; i++) {
-        disableSpecificButton(NEED_CODES[i]);
-    }
-}
-
-// Make all buttons clickable
-function enableButtons() {
-    for (let i = 0; i < NEED_CODES.length; i++) {
-        enableSpecificButton(NEED_CODES[i]);
-    }
-}
-
-// Enables only one specific button based on value of needCode. Edits button's style properties.
-function enableSpecificButton(needCode) {
-    switch (needCode) {
-        case WAKE:
-            wakeButton.addEventListener("click", wakeUp);
-            wakeButton.style = STYLE_CLICKABLE;
-            break;
-        case HUNGER:
-            feedButton.addEventListener("click", eat);
-            feedButton.style = STYLE_CLICKABLE;
-            break;
-        case ENERGY:
-            sleepButton.addEventListener("click", sleep);
-            sleepButton.style = STYLE_CLICKABLE;
-            break;
-        case BLADDER:
-            bathroomButton.addEventListener("click", goBathroom);
-            bathroomButton.style = STYLE_CLICKABLE;
-            break;
-        case HYGIENE:
-            batheButton.addEventListener("click", bathe);
-            batheButton.style = STYLE_CLICKABLE;
-            break;
-        case SOCIAL:
-            petButton.addEventListener("click", socialize);
-            petButton.style = STYLE_CLICKABLE;
-            break;
-        case FUN:
-            playButton.addEventListener("click", play);
-            playButton.style = STYLE_CLICKABLE;
-            break;
-    }
-}
-
-// Disable only one specific button based on needCode. Edits button's style properties.
-function disableSpecificButton(needCode) {
-    switch (needCode) {
-        case WAKE:
-            wakeButton.removeEventListener("click", wakeUp);
-            wakeButton.style = STYLE_UNCLICKABLE;
-            break;
-        case HUNGER:
-            feedButton.removeEventListener("click", eat);
-            feedButton.style = STYLE_UNCLICKABLE;
-            break;
-        case ENERGY:
-            sleepButton.removeEventListener("click", sleep);
-            sleepButton.style = STYLE_UNCLICKABLE;
-            break;
-        case BLADDER:
-            bathroomButton.removeEventListener("click", goBathroom);
-            bathroomButton.style = STYLE_UNCLICKABLE;
-            break;
-        case HYGIENE:
-            batheButton.removeEventListener("click", bathe);
-            batheButton.style = STYLE_UNCLICKABLE;
-            break;
-        case SOCIAL:
-            petButton.removeEventListener("click", socialize);
-            petButton.style = STYLE_UNCLICKABLE;
-            break;
-        case FUN:
-            playButton.removeEventListener("click", play);
-            playButton.style = STYLE_UNCLICKABLE;
-            break;
-    }
-}
-
 // Other Functions
 // Will run some action/animation
 function runAnimation() {
     // ***TO DO***
 }
 */
+
+async function wakeUp() {
+    // *** TO DO
+    console.log("I'm awake now!");
+}
 
 async function eat() {
     // ***TO DO*** disable buttons, run animation?, enable buttons
@@ -155,6 +157,21 @@ async function eat() {
     catch (err) {
         console.log('Error while attempting to feed pet')
     }
+}
+
+async function sleep() {
+    // *** TO DO
+    console.log("Goodnight!");
+}
+
+async function goBathroom() {
+    // *** TO DO
+    console.log("Pee time!");
+}
+
+async function bathe() {
+    // *** TO DO
+    console.log("Scrub-a-dub-dub!");
 }
 
 async function socialize() {
@@ -195,6 +212,7 @@ async function play() {
     }
 }
 
+// Refreshes Need displays every 0.5 seconds
 async function updateNeeds() {
     try {
         const response = await fetch('/needs', {
@@ -215,7 +233,6 @@ async function updateNeeds() {
 }
 
 // MAIN
-//enableButtons();
-//disableSpecificButton(WAKE);
+enableButtons(WAKE);
 updateNeeds();
 const updateId = setInterval(() => updateNeeds(), 500);
