@@ -13,28 +13,52 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 
 app.get('/needs', (req, res) => {
-    const needs = PetController.getNeedsAsStrings();
+    const needs = PetController.getNeeds();
     res.status(200).send(needs);
 });
 
-app.put('/needs/eat', (req, res) => {
+app.get('/needs/sleep', (req, res) => {
+    const result = PetController.FILL_FUNCTIONS.sleep();
+    const statusCode = (typeof result !== 'undefined' ? 200 : 400);
+    res.status(statusCode).send({result: result});
+});
+
+app.get('/needs/wake', (req, res) => {
+    const result = PetController.wakeUp();
+    const statusCode = (typeof result !== 'undefined' ? 200 : 400);
+    res.status(statusCode).send({result: result});
+});
+
+app.get('/needs/pee', (req, res) => {
+    const result = PetController.FILL_FUNCTIONS.pee();
+    const statusCode = (typeof result !== 'undefined' ? 200 : 400);
+    res.status(statusCode).send({result: result});
+});
+
+app.get('/needs/bathe', (req, res) => {
+    const result = PetController.FILL_FUNCTIONS.bathe();
+    const statusCode = (typeof result !== 'undefined' ? 200 : 400);
+    res.status(statusCode).send({result: result});
+});
+
+app.patch('/needs/eat', (req, res) => {
     const value = req.body.value;
     const result = PetController.FILL_FUNCTIONS.eat(value);
-    const statusCode = result ? 200 : 400;
+    const statusCode = (typeof result !== 'undefined' ? 200 : 400);
     res.status(statusCode).send({result: result});
 });
 
-app.put('/needs/socialize', (req, res) => {
+app.patch('/needs/socialize', (req, res) => {
     const value = req.body.value;
     const result = PetController.FILL_FUNCTIONS.socialize(value);
-    const statusCode = result ? 200 : 400;
+    const statusCode = (typeof result !== 'undefined' ? 200 : 400);
     res.status(statusCode).send({result: result});
 });
 
-app.put('/needs/play', (req, res) => {
+app.patch('/needs/play', (req, res) => {
     const value = req.body.value;
     const result = PetController.FILL_FUNCTIONS.play(value);
-    const statusCode = result ? 200 : 400;
+    const statusCode = (typeof result !== 'undefined' ? 200 : 400);
     res.status(statusCode).send({result: result});
 });
 
