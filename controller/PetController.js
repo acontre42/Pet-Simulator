@@ -129,6 +129,9 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         return true;
     },
     sleep: function() {
+        if (pet.energyFilled()) {
+            return false;
+        }
         clearInterval(DECAY_INTERVALS.energy); // Stop energy decay
         FILL_INTERVALS.sleep = setInterval(() => { 
             if (!pet.energyFilled()) { // Gradually fill energy need
@@ -138,8 +141,12 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
                 wakeUp();
             }
         }, FILL_TIME.sleep);
+        return true;
     },
     pee: function() {
+        if (pet.bladderFilled()) {
+            return false;
+        }
         clearInterval(DECAY_INTERVALS.bladder); // Stop bladder decay
         FILL_INTERVALS.pee = setInterval(() => {
             if (!pet.bladderFilled()) { // Gradually fill bladder need
@@ -150,8 +157,12 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
                 DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
             }
         }, FILL_TIME.bladder);
+        return true;
     },
     bathe: function() {
+        if (pet.hygieneFilled()) {
+            return false;
+        }
         clearInterval(DECAY_INTERVALS.hygiene); // Stop hygiene decay
         FILL_INTERVALS.bathe = setInterval(() => {
             if (!pet.hygieneFilled()) { // Gradually fill hygiene need
@@ -162,6 +173,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
                 DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
             }
         }, FILL_TIME.bathe);
+        return true;
     },
     socialize: function(value) { 
         if (typeof value !== 'number') {
@@ -205,17 +217,31 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
 export function wakeUp() {
     clearInterval(FILL_INTERVALS.sleep);
     DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
+    return true;
 }
 
-export function getNeedsAsStrings() {
-    const info = pet.getAll();
+export function getNeeds() {
+    const {hunger, energy, bladder, hygiene, social, fun, max} = pet.getAll();
+    const values = {
+        hunger: hunger,
+        energy: energy,
+        bladder: bladder,
+        hygiene: hygiene,
+        social: social,
+        fun: fun,
+        max: max
+    };
+    const strings = {
+        hunger: `Hunger: ${hunger} / ${max}`,
+        energy: `Energy: ${energy} / ${max}`,
+        bladder: `Bladder: ${bladder} / ${max}`,
+        hygiene: `Hygiene: ${hygiene} / ${max}`,
+        social: `Social: ${social} / ${max}`,
+        fun: `Fun: ${fun} / ${max}`
+    };
     const needs = {
-        hunger: `Hunger: ${info.hunger} / ${info.max}`,
-        energy: `Energy: ${info.energy} / ${info.max}`,
-        bladder: `Bladder: ${info.bladder} / ${info.max}`,
-        hygiene: `Hygiene: ${info.hygiene} / ${info.max}`,
-        social: `Social: ${info.social} / ${info.max}`,
-        fun: `Fun: ${info.fun} / ${info.max}`
+        values: values,
+        strings: strings
     };
     return needs;
 }
