@@ -222,27 +222,7 @@ export function wakeUp() {
 
 export function getNeeds() {
     const {hunger, energy, bladder, hygiene, social, fun, max} = pet.getAll();
-    const values = {
-        hunger: hunger,
-        energy: energy,
-        bladder: bladder,
-        hygiene: hygiene,
-        social: social,
-        fun: fun,
-        max: max
-    };
-    const strings = {
-        hunger: `Hunger: ${hunger} / ${max}`,
-        energy: `Energy: ${energy} / ${max}`,
-        bladder: `Bladder: ${bladder} / ${max}`,
-        hygiene: `Hygiene: ${hygiene} / ${max}`,
-        social: `Social: ${social} / ${max}`,
-        fun: `Fun: ${fun} / ${max}`
-    };
-    const needs = {
-        values: values,
-        strings: strings
-    };
+    const needs = { hunger, energy, bladder, hygiene, social, fun, max };
     return needs;
 }
 

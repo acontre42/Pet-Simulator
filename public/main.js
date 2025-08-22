@@ -21,6 +21,9 @@ const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
 
+// Comparison Variables
+let priorEnergy = 0; // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
+
 // Button-related Variables
 const WAKE = -1, HUNGER = 0, ENERGY = 1, BLADDER = 2, HYGIENE = 3, SOCIAL = 4, FUN = 5; // CODES FOR SPECIFIC NEEDS
 const NEED_CODES = [WAKE, HUNGER, ENERGY, BLADDER, HYGIENE, SOCIAL, FUN];
@@ -115,16 +118,8 @@ function disableSpecificButton(needCode) {
 /*
 // Will end simulation if hunger stays at 0 too long. Disable all buttons, clear all intervals, alert user.
 function loss() {
-    // ***TO DO***
+    // ***TO DO*** check for living status every time updateNeeds is called?
     disableButtons();
-    for (let key in needIntervals) {
-        clearInterval(needIntervals[key]);
-        needIntervals[key] = {};
-    }
-    for (let key in decayIntervals) {
-        clearInterval(decayIntervals[key]);
-        decayIntervals[key] = {};
-    }
     alert("HE DEAD");
 }
 
@@ -136,8 +131,43 @@ function runAnimation() {
 */
 
 async function wakeUp() {
-    // *** TO DO
-    console.log("I'm awake now!");
+    // *** TO DO enable buttons, run animation?
+    try {
+        const response = await fetch('/needs/wake', {
+            method: 'GET'
+        });
+        const result = await response.json();
+        console.log(result); // *** DELETE
+        console.log("I'm awake now!"); // TO DO: notification
+        disableSpecificButton(WAKE);
+        enableButtons(WAKE);
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+async function sleep() {
+    // *** TO DO disable buttons, run animation?, enable buttons
+    try {
+        const response = await fetch('/needs/sleep', {
+            method: 'GET'
+        });
+        const {result} = await response.json();
+        console.log(result); // *** DELETE
+        if (result) {
+            disableButtons();
+            enableSpecificButton(WAKE);
+            console.log("Goodnight!"); // TO DO: notification
+        }
+        else {
+            // *** TO DO: not tired notification
+            console.log('Not tired'); // TO DO: notification
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 async function eat() {
@@ -145,33 +175,29 @@ async function eat() {
     let food_value = +foodSelect.value; // Unary + makes operand into a number
     try {
         const response = await fetch('/needs/eat', {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({value: food_value})
         });
         const result = await response.json();
-        console.log(result);
+        console.log(result); // *** DELETE
+        // TO DO: notification
     }
     catch (err) {
         console.log('Error while attempting to feed pet')
     }
 }
 
-async function sleep() {
-    // *** TO DO
-    console.log("Goodnight!");
-}
-
 async function goBathroom() {
-    // *** TO DO
-    console.log("Pee time!");
+    // *** TO DO disable buttons, run animation?, enable buttons
+    console.log("Pee time!"); // TO DO: notification
 }
 
 async function bathe() {
-    // *** TO DO
-    console.log("Scrub-a-dub-dub!");
+    // *** TO DO disable buttons, run animation?, enable buttons
+    console.log("Scrub-a-dub-dub!"); // TO DO: notification
 }
 
 async function socialize() {
@@ -179,14 +205,14 @@ async function socialize() {
     let social_value = +petSelect.value;
     try {
         const response = await fetch('/needs/socialize', {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({value: social_value})
         });
         const result = await response.json();
-        console.log(result);
+        console.log(result); // *** DELETE
     }
     catch (err) {
         console.log('Error while attempting to socialize with pet')
@@ -198,14 +224,14 @@ async function play() {
     let fun_value = +playSelect.value;
     try {
         const response = await fetch('/needs/play', {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({value: fun_value})
         });
         const result = await response.json();
-        console.log(result);
+        console.log(result); // *** DELETE
     }
     catch (err) {
         console.log('Error while attempting to socialize with pet')
@@ -219,13 +245,20 @@ async function updateNeeds() {
             method: 'GET'
         });
         const data = await response.json();
-        const {hunger, energy, bladder, hygiene, social, fun} = data;
-        hungerP.innerText = hunger;
-        energyP.innerText = energy;
-        bladderP.innerText = bladder;
-        hygieneP.innerText = hygiene;
-        socialP.innerText = social;
-        funP.innerText = fun;
+        const {hunger, energy, bladder, hygiene, social, fun, max} = data;
+        // Update text
+        hungerP.innerText = `Hunger: ${hunger} / ${max}`,
+        energyP.innerText = `Energy: ${energy} / ${max}`,
+        bladderP.innerText = `Bladder: ${bladder} / ${max}`,
+        hygieneP.innerText = `Hygiene: ${hygiene} / ${max}`,
+        socialP.innerText = `Social: ${social} / ${max}`,
+        funP.innerText = `Fun: ${fun} / ${max}`
+        // Compare to prior values
+        console.log(`prior: ${priorEnergy}, current: ${energy}`); // *** DELETE
+        if (energy == max && energy != priorEnergy) {
+            wakeUp();
+        }
+        priorEnergy = energy;
     }
     catch (err) {
         console.log(err);
