@@ -23,6 +23,7 @@ export default class Pet {
     // Public:
     constructor() {
         this.name = "Toby";
+        this.alive = true;
         this.hunger = STARTER_NEEDS.hunger;
         this.energy = STARTER_NEEDS.energy;
         this.bladder = STARTER_NEEDS.bladder;
@@ -32,6 +33,7 @@ export default class Pet {
     }
     // Getters
     getName() { return this.name; }
+    isAlive() { return this.alive; }
     getHunger() { return this.hunger; }
     getEnergy() { return this.energy; }
     getBladder() { return this.bladder; }
@@ -128,5 +130,8 @@ export default class Pet {
     bladderFailure() {
         this.bladder = MAX_NEEDS;
         this.hygiene = MIN_NEEDS;
+    }
+    loss() {
+        this.alive = false;
     }
 }
