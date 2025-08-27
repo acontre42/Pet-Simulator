@@ -34,7 +34,7 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         if (pet.hungerEmpty()) {
             FAILURE_COUNTS.hunger++;
             if (FAILURE_COUNTS.hunger == MAX_FAILURE_HUNGER) {
-                // *** TO DO: trigger hunger failure
+                hungerFailure();
             }
         }
         else {
@@ -111,7 +111,7 @@ const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
 
 export const FILL_FUNCTIONS = { // Functions that fill needs
     eat: function(value) {
-        if (typeof value !== 'number') {
+        if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
         clearInterval(DECAY_INTERVALS.hunger); // Stop hunger decay
@@ -129,7 +129,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         return true;
     },
     sleep: function() {
-        if (pet.energyFilled()) {
+        if (!pet.isAlive() || pet.energyFilled()) {
             return false;
         }
         clearInterval(DECAY_INTERVALS.energy); // Stop energy decay
@@ -144,7 +144,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         return true;
     },
     pee: function() {
-        if (pet.bladderFilled()) {
+        if (!pet.isAlive() || pet.bladderFilled()) {
             return false;
         }
         clearInterval(DECAY_INTERVALS.bladder); // Stop bladder decay
@@ -160,7 +160,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         return true;
     },
     bathe: function() {
-        if (pet.hygieneFilled()) {
+        if (!pet.isAlive() || pet.hygieneFilled()) {
             return false;
         }
         clearInterval(DECAY_INTERVALS.hygiene); // Stop hygiene decay
@@ -176,7 +176,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         return true;
     },
     socialize: function(value) { 
-        if (typeof value !== 'number') {
+        if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
         clearInterval(DECAY_INTERVALS.social); // Stop social need decay
@@ -194,7 +194,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         return true;
     },
     play: function(value) { 
-        if (typeof value !== 'number') {
+        if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
         clearInterval(DECAY_INTERVALS.fun); // Stop fun need decay
@@ -215,6 +215,9 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
 
 // Can be called by FILL_FUNCTIONS.sleep or by user
 export function wakeUp() {
+    if (!pet.isAlive()) {
+        return false;
+    }
     clearInterval(FILL_INTERVALS.sleep);
     DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
     return true;
@@ -242,4 +245,22 @@ function pauseAllDecay() {
     for (let interval in DECAY_INTERVALS) {
         clearInterval(DECAY_INTERVALS[interval]);
     }
+}
+
+// Pauses all fill intervals
+function pauseAllFill() {
+    for (let interval in FILL_INTERVALS) {
+        clearInterval(FILL_INTERVALS[interval]);
+    }
+}
+
+// Pause all intervals and set pet's alive attribute to false
+function hungerFailure() {
+    pauseAllDecay();
+    pauseAllFill();
+    pet.loss();
+}
+
+export function getName() {
+    return pet.getName();
 }
