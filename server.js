@@ -12,6 +12,19 @@ import * as PetController from './controller/PetController.js';
 app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 
+app.get('/pet/name', (req, res) => {
+    const name = PetController.getName();
+    res.status(200).send({name: name});
+});
+
+app.patch('/pet/name', (req, res) => {
+    const name = req.body.name;
+    const valid = PetController.rename(name);
+    const statusCode = (typeof valid !== 'undefined' ? 200 : 400);
+    const result = (valid ? true : false);
+    res.status(statusCode).send({result: result});
+});
+
 app.get('/needs', (req, res) => {
     const needs = PetController.getNeeds();
     res.status(200).send(needs);

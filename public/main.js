@@ -1,4 +1,6 @@
 "use strict";
+import NotificationBar from './NotificationBar.js';
+const NB = new NotificationBar();
 
 // HTML Elements
 // Buttons
@@ -20,6 +22,9 @@ const funP = document.getElementById("fun");
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
+
+// Pet Info Variables
+let name;
 
 // Comparison Variables
 let priorEnergy = 0; // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
@@ -118,7 +123,6 @@ function disableSpecificButton(needCode) {
 /*
 // Will end simulation if hunger stays at 0 too long. Disable all buttons, clear all intervals, alert user.
 function loss() {
-    // ***TO DO*** check for living status every time updateNeeds is called?
     disableButtons();
     alert("HE DEAD");
 }
@@ -129,6 +133,20 @@ function runAnimation() {
     // ***TO DO***
 }
 */
+async function getPetName() {
+    try {
+        const response = await fetch('/pet/name', {
+            method: 'GET'
+        });
+        const data = await response.json();
+        name = data.name;
+        console.log(name); // *** DELETE
+        // *** TO DO: display name
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
 
 async function wakeUp() {
     // *** TO DO enable buttons, run animation?
@@ -138,7 +156,7 @@ async function wakeUp() {
         });
         const result = await response.json();
         console.log(result); // *** DELETE
-        console.log("I'm awake now!"); // TO DO: notification
+        notify("I'm awake now!"); // TO DO: notification
         disableSpecificButton(WAKE);
         enableButtons(WAKE);
     }
@@ -158,11 +176,10 @@ async function sleep() {
         if (result) {
             disableButtons();
             enableSpecificButton(WAKE);
-            console.log("Goodnight!"); // TO DO: notification
+            notify("Goodnight!");
         }
         else {
-            // *** TO DO: not tired notification
-            console.log('Not tired'); // TO DO: notification
+            notify(`${name} is not tired.`);
         }
     }
     catch (err) {
@@ -183,7 +200,7 @@ async function eat() {
         });
         const result = await response.json();
         console.log(result); // *** DELETE
-        // TO DO: notification
+        notify("Munch munch crunch crunch"); // TO DO: notification
     }
     catch (err) {
         console.log('Error while attempting to feed pet')
@@ -192,12 +209,12 @@ async function eat() {
 
 async function goBathroom() {
     // *** TO DO disable buttons, run animation?, enable buttons
-    console.log("Pee time!"); // TO DO: notification
+    notify("Pee time!"); // TO DO: notification
 }
 
 async function bathe() {
     // *** TO DO disable buttons, run animation?, enable buttons
-    console.log("Scrub-a-dub-dub!"); // TO DO: notification
+    notify("Scrub-a-dub-dub!"); // TO DO: notification
 }
 
 async function socialize() {
@@ -239,7 +256,7 @@ async function play() {
 }
 
 // Refreshes Need displays every 0.5 seconds
-async function updateNeeds() {
+async function updateNeeds() { // *** TO DO: check living status each time called
     try {
         const response = await fetch('/needs', {
             method: 'GET'
@@ -265,7 +282,16 @@ async function updateNeeds() {
     }
 }
 
+function notify(msg) {
+    console.log(msg); // *** TO DO: add notification to future notification box
+}
+
+function rename() {
+    // *** TO DO: pass name to petcontroller & change name display
+}
+
 // MAIN
+name = await getPetName();
 enableButtons(WAKE);
 updateNeeds();
 const updateId = setInterval(() => updateNeeds(), 500);

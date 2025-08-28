@@ -264,3 +264,7 @@ function hungerFailure() {
 export function getName() {
     return pet.getName();
 }
+
+export function rename(name) {
+    // *** TO DO: check name and set
+}
