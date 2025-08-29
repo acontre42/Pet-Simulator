@@ -19,6 +19,7 @@ const hygieneP = document.getElementById("hygiene");
 const socialP = document.getElementById("social");
 const funP = document.getElementById("fun");
 // Other
+const nameSpan = document.getElementById("pet-name");
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
@@ -140,8 +141,7 @@ async function getPetName() {
         });
         const data = await response.json();
         name = data.name;
-        console.log(name); // *** DELETE
-        // *** TO DO: display name
+        nameSpan.textContent = name;
     }
     catch (err) {
         console.log(err);
@@ -291,7 +291,7 @@ function rename() {
 }
 
 // MAIN
-name = await getPetName();
+await getPetName();
 enableButtons(WAKE);
 updateNeeds();
 const updateId = setInterval(() => updateNeeds(), 500);
