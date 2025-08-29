@@ -1,16 +1,23 @@
 import Pet from '../model/Pet.js';
 const pet = new Pet();
 
+// NEED FAILURES
 const MAX_FAILURE_HUNGER = 10, MAX_FAILURE_ENERGY = 15, MAX_FAILURE_SOCIAL = 25, MAX_FAILURE_FUN = 5; // ***TO DO*** TWEAK
-
 const FAILURE_COUNTS = {
     hunger: 0,
     energy: 0,
     social: 0,
     fun: 0
 };
+function hungerFailure() { // Pause all intervals and set pet's alive attribute to false
+    pauseAllDecay();
+    pauseAllFill();
+    pet.loss();
+}
 
-const DECAY_TIME = { // How fast needs decay *** TO DO: TWEAK
+
+// DECAY NEEDS
+const DECAY_TIME = { // How fast needs decay // *** TO DO: TWEAK
     hunger: 30000,
     energy: 60000,
     bladder: 45000,
@@ -18,17 +25,15 @@ const DECAY_TIME = { // How fast needs decay *** TO DO: TWEAK
     social: 20000,
     fun: 25000
 };
-
-const DECAY_INTERVALS = { // Holds intervals for decaying needs
-    hunger: setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger),
-    energy: setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy),
-    bladder: setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder),
-    hygiene: setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene),
-    social: setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social),
-    fun: setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun)
+const DECAY_INTERVALS = { // Will hold intervals for decaying needs
+    hunger: {},
+    energy: {},
+    bladder: {},
+    hygiene: {},
+    social: {},
+    fun: {}
 };
-
-const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
+const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs // *** TO DO: clear previous fill interval in event of repeat or prevent repeats by blocking?
     hunger: function() {
         pet.alterHunger(-1);
         if (pet.hungerEmpty()) {
@@ -90,7 +95,31 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         }
     }
 };
+export function startDecay() { // Must be called once page has loaded
+    DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
+    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
+    DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
+    DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
+    DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
+    DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
+}
+function resumeAllDecay() { // Resumes all decay intervals
+    pauseAllDecay(); // just in case
+    DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
+    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
+    DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
+    DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
+    DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
+    DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
+}
+export function pauseAllDecay() { // Pauses all decay intervals
+    for (let interval in DECAY_INTERVALS) {
+        clearInterval(DECAY_INTERVALS[interval]);
+    }
+}
 
+
+// FILL NEEDS
 const FILL_INTERVALS = { // Will hold intervals for needs when being filled.
     eat: {},
     sleep: {},
@@ -99,7 +128,6 @@ const FILL_INTERVALS = { // Will hold intervals for needs when being filled.
     socialize: {},
     play: {}
 };
-
 const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
     eat: 1500,
     sleep: 5000,
@@ -108,7 +136,6 @@ const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
     socialize: 1000,
     play: 3000
 };
-
 export const FILL_FUNCTIONS = { // Functions that fill needs
     eat: function(value) {
         if (!pet.isAlive() || typeof value !== 'number') {
@@ -212,59 +239,25 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         return true;
     }
 }
+export function pauseAllFill() { // Pauses all fill intervals
+    for (let interval in FILL_INTERVALS) {
+        clearInterval(FILL_INTERVALS[interval]);
+    }
+}
 
-// Can be called by FILL_FUNCTIONS.sleep or by user
-export function wakeUp() {
+
+// PET 
+export const getName = () => pet.getName();
+export const getNeeds = () => pet.getAll();
+export function rename(name) {
+    // *** TO DO: check name and set
+}
+
+export function wakeUp() { // Can be called by FILL_FUNCTIONS.sleep or by user // *** TO DO: MOVE TO DECAY_FUNCTIONS?
     if (!pet.isAlive()) {
         return false;
     }
     clearInterval(FILL_INTERVALS.sleep);
     DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
     return true;
-}
-
-export function getNeeds() {
-    const {hunger, energy, bladder, hygiene, social, fun, max} = pet.getAll();
-    const needs = { hunger, energy, bladder, hygiene, social, fun, max };
-    return needs;
-}
-
-// Resumes all decay intervals
-function resumeAllDecay() {
-    pauseAllDecay(); // just in case
-    DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
-    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
-    DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
-    DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
-    DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
-    DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
-}
-
-// Pauses all decay intervals
-function pauseAllDecay() {
-    for (let interval in DECAY_INTERVALS) {
-        clearInterval(DECAY_INTERVALS[interval]);
-    }
-}
-
-// Pauses all fill intervals
-function pauseAllFill() {
-    for (let interval in FILL_INTERVALS) {
-        clearInterval(FILL_INTERVALS[interval]);
-    }
-}
-
-// Pause all intervals and set pet's alive attribute to false
-function hungerFailure() {
-    pauseAllDecay();
-    pauseAllFill();
-    pet.loss();
-}
-
-export function getName() {
-    return pet.getName();
-}
-
-export function rename(name) {
-    // *** TO DO: check name and set
 }
