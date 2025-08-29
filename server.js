@@ -12,6 +12,17 @@ import * as PetController from './controller/PetController.js';
 app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 
+app.get('/pet/start', (req, res) => {
+    PetController.startDecay();
+    res.status(200).send();
+});
+
+app.get('/pet/stop', (req, res) => {
+    PetController.pauseAllDecay();
+    PetController.pauseAllFill();
+    res.status(200).send();
+})
+
 app.get('/pet/name', (req, res) => {
     const name = PetController.getName();
     res.status(200).send({name: name});

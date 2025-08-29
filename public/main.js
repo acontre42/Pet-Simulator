@@ -293,5 +293,15 @@ function rename() {
 // MAIN
 await getPetName();
 enableButtons(WAKE);
-updateNeeds();
+
+await fetch('/pet/start', { // Start needs decay
+    method: 'GET'
+});
+
 const updateId = setInterval(() => updateNeeds(), 500);
+
+window.addEventListener('beforeunload', () => { // Pause needs decay before leaving
+    fetch('/pet/stop', {
+        method: 'GET'
+    });
+});
