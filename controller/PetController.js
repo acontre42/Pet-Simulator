@@ -95,7 +95,7 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs 
         }
     }
 };
-export function startDecay() { // Must be called once page has loaded
+export function startDecay() { // Must be called once page has loaded. If resuming needs decay while page still loaded, use resumeAllDecay() instead
     DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
     DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
     DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
@@ -103,14 +103,9 @@ export function startDecay() { // Must be called once page has loaded
     DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
     DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
 }
-function resumeAllDecay() { // Resumes all decay intervals
+function resumeAllDecay() { // Resumes all decay intervals after certain events // *** TO DO: is this redundant? tbd
     pauseAllDecay(); // just in case
-    DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
-    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
-    DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
-    DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
-    DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
-    DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
+    startDecay();
 }
 export function pauseAllDecay() { // Pauses all decay intervals
     for (let interval in DECAY_INTERVALS) {
