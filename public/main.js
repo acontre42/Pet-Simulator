@@ -19,7 +19,6 @@ const hygieneP = document.getElementById("hygiene");
 const socialP = document.getElementById("social");
 const funP = document.getElementById("fun");
 // Other
-const nameSpan = document.getElementById("pet-name");
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
@@ -121,19 +120,45 @@ function disableSpecificButton(needCode) {
     }
 }
 
-/*
-// Will end simulation if hunger stays at 0 too long. Disable all buttons, clear all intervals, alert user.
-function loss() {
-    disableButtons();
-    alert("HE DEAD");
+// Display-related Functions
+// Update all elements classed as pet-name with pet name
+function updateNameDisplay() {
+    const elems = document.querySelectorAll('.pet-name');
+    for (let elem of elems) {
+        elem.textContent = name;
+    }
+}
+// Refreshes Need displays every 0.5 seconds
+async function updateNeeds() { // *** TO DO: check living status each time called
+    try {
+        const response = await fetch('/needs', {
+            method: 'GET'
+        });
+        const data = await response.json();
+        const {hunger, energy, bladder, hygiene, social, fun, max} = data;
+        // Update text
+        hungerP.innerText = `Hunger: ${hunger} / ${max}`,
+        energyP.innerText = `Energy: ${energy} / ${max}`,
+        bladderP.innerText = `Bladder: ${bladder} / ${max}`,
+        hygieneP.innerText = `Hygiene: ${hygiene} / ${max}`,
+        socialP.innerText = `Social: ${social} / ${max}`,
+        funP.innerText = `Fun: ${fun} / ${max}`
+        // Compare to prior values
+        console.log(`prior: ${priorEnergy}, current: ${energy}`); // *** DELETE
+        if (energy == max && energy != priorEnergy) {
+            wakeUp();
+        }
+        priorEnergy = energy;
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+function notify(msg) {
+    console.log(msg); // *** TO DO: add notification to future notification box
 }
 
-// Other Functions
-// Will run some action/animation
-function runAnimation() {
-    // ***TO DO***
-}
-*/
+// Pet-related Functions
 async function getPetName() {
     try {
         const response = await fetch('/pet/name', {
@@ -141,7 +166,30 @@ async function getPetName() {
         });
         const data = await response.json();
         name = data.name;
-        nameSpan.textContent = name;
+        updateNameDisplay();
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+async function rename() {
+    let newName = ''; // *** TO DO: get name value from future input
+    try {
+        const response = await fetch('/pet/name', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: newName})
+        });
+        const {result} = await response.json();
+        if (result) {
+            await getPetName();
+        }
+        else {
+            console.log('There was an error renaming your pet');
+        }
     }
     catch (err) {
         console.log(err);
@@ -255,60 +303,6 @@ async function play() {
     }
 }
 
-// Refreshes Need displays every 0.5 seconds
-async function updateNeeds() { // *** TO DO: check living status each time called
-    try {
-        const response = await fetch('/needs', {
-            method: 'GET'
-        });
-        const data = await response.json();
-        const {hunger, energy, bladder, hygiene, social, fun, max} = data;
-        // Update text
-        hungerP.innerText = `Hunger: ${hunger} / ${max}`,
-        energyP.innerText = `Energy: ${energy} / ${max}`,
-        bladderP.innerText = `Bladder: ${bladder} / ${max}`,
-        hygieneP.innerText = `Hygiene: ${hygiene} / ${max}`,
-        socialP.innerText = `Social: ${social} / ${max}`,
-        funP.innerText = `Fun: ${fun} / ${max}`
-        // Compare to prior values
-        console.log(`prior: ${priorEnergy}, current: ${energy}`); // *** DELETE
-        if (energy == max && energy != priorEnergy) {
-            wakeUp();
-        }
-        priorEnergy = energy;
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
-
-function notify(msg) {
-    console.log(msg); // *** TO DO: add notification to future notification box
-}
-
-async function rename() {
-    let newName = ''; // *** TO DO: get name value from future input
-    try {
-        const response = await fetch('/pet/name', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({name: newName})
-        });
-        const {result} = await response.json();
-        if (result) {
-            await getPetName();
-        }
-        else {
-            console.log('There was an error renaming your pet');
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
-
 // MAIN
 await getPetName();
 enableButtons(WAKE);
@@ -324,3 +318,18 @@ window.addEventListener('beforeunload', () => { // Pause needs decay before leav
         method: 'GET'
     });
 });
+
+/*
+// Disable all buttons, clear all intervals, alert user.
+function endSimulation() {
+    disableButtons();
+    clearInterval(updateId);
+    notify(`${name} has passed away. RIP`);
+}
+
+// Other Functions
+// Will run some action/animation
+function runAnimation() {
+    // ***TO DO***
+}
+*/
