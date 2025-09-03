@@ -93,8 +93,17 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs 
         else {
             FAILURE_COUNTS.fun = 0;
         }
+    },
+    wakeUp: function() {
+        if (!pet.isAlive()) {
+            return false;
+        }
+        clearInterval(FILL_INTERVALS.sleep);
+        DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
+        return true;
     }
 };
+export const wakeUp = () => DECAY_FUNCTIONS.wakeUp();
 export function startDecay() { // Must be called once page has loaded. If resuming needs decay while page still loaded, use resumeAllDecay() instead
     DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
     DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
@@ -160,7 +169,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
                 pet.alterEnergy(1);
             }
             else { // Clear sleep interval and resume energy decay
-                wakeUp();
+                DECAY_FUNCTIONS.wakeUp();
             }
         }, FILL_TIME.sleep);
         return true;
@@ -246,13 +255,4 @@ export const getName = () => pet.getName();
 export const getNeeds = () => pet.getAll();
 export function rename(name) {
     // *** TO DO: check name and set
-}
-
-export function wakeUp() { // Can be called by FILL_FUNCTIONS.sleep or by user // *** TO DO: MOVE TO DECAY_FUNCTIONS?
-    if (!pet.isAlive()) {
-        return false;
-    }
-    clearInterval(FILL_INTERVALS.sleep);
-    DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
-    return true;
 }
