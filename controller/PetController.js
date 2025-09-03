@@ -253,6 +253,4 @@ export function pauseAllFill() { // Pauses all fill intervals
 // PET 
 export const getName = () => pet.getName();
 export const getNeeds = () => pet.getAll();
-export function rename(name) {
-    // *** TO DO: check name and set
-}
+export const rename = (name) => pet.setName(name);

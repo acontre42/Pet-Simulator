@@ -286,8 +286,27 @@ function notify(msg) {
     console.log(msg); // *** TO DO: add notification to future notification box
 }
 
-function rename() {
-    // *** TO DO: pass name to petcontroller & change name display
+async function rename() {
+    let newName = ''; // *** TO DO: get name value from future input
+    try {
+        const response = await fetch('/pet/name', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: newName})
+        });
+        const {result} = await response.json();
+        if (result) {
+            await getPetName();
+        }
+        else {
+            console.log('There was an error renaming your pet');
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 // MAIN

@@ -31,9 +31,8 @@ app.get('/pet/name', (req, res) => {
 app.patch('/pet/name', (req, res) => {
     const name = req.body.name;
     const valid = PetController.rename(name);
-    const statusCode = (typeof valid !== 'undefined' ? 200 : 400);
-    const result = (valid ? true : false);
-    res.status(statusCode).send({result: result});
+    const statusCode = (valid === true ? 200 : 400);
+    res.status(statusCode).send({result: valid});
 });
 
 app.get('/needs', (req, res) => {
