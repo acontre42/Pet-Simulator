@@ -129,14 +129,20 @@ function updateNameDisplay() {
     }
 }
 // Refreshes Need displays every 0.5 seconds
-async function updateNeeds() { // *** TO DO: check living status each time called
+async function updateNeeds() {
     try {
         const response = await fetch('/needs', {
             method: 'GET'
         });
         const data = await response.json();
-        const {hunger, energy, bladder, hygiene, social, fun, max} = data;
+        // End simulation if no longer alive
+        const {alive} = data;
+        if (!alive) {
+            await endSimulation();
+            return;
+        }
         // Update text
+        const {hunger, energy, bladder, hygiene, social, fun, max} = data;
         hungerP.innerText = `Hunger: ${hunger} / ${max}`,
         energyP.innerText = `Energy: ${energy} / ${max}`,
         bladderP.innerText = `Bladder: ${bladder} / ${max}`,
@@ -156,6 +162,15 @@ async function updateNeeds() { // *** TO DO: check living status each time calle
 }
 function notify(msg) {
     console.log(msg); // *** TO DO: add notification to future notification box
+}
+// Disable all buttons, clear all intervals, alert user.
+async function endSimulation() {
+    fetch('/pet/stop', {
+        method: 'GET'
+    });
+    disableButtons();
+    clearInterval(updateId);
+    notify(`${name} has passed away. RIP`);
 }
 
 // Pet-related Functions
@@ -202,11 +217,12 @@ async function wakeUp() {
         const response = await fetch('/needs/wake', {
             method: 'GET'
         });
-        const result = await response.json();
-        console.log(result); // *** DELETE
-        notify("I'm awake now!"); // TO DO: notification
-        disableSpecificButton(WAKE);
-        enableButtons(WAKE);
+        const {result} = await response.json();
+        if (result) {
+            notify(`${name} has woken up.`);
+            disableSpecificButton(WAKE);
+            enableButtons(WAKE);
+        }
     }
     catch (err) {
         console.log(err);
@@ -220,11 +236,10 @@ async function sleep() {
             method: 'GET'
         });
         const {result} = await response.json();
-        console.log(result); // *** DELETE
         if (result) {
             disableButtons();
             enableSpecificButton(WAKE);
-            notify("Goodnight!");
+            notify(`${name} has gone to sleep.`);
         }
         else {
             notify(`${name} is not tired.`);
@@ -246,9 +261,11 @@ async function eat() {
             },
             body: JSON.stringify({value: food_value})
         });
-        const result = await response.json();
-        console.log(result); // *** DELETE
-        notify("Munch munch crunch crunch"); // TO DO: notification
+        const {result} = await response.json();
+        if (result) {
+            let selectedIndex = foodSelect.selectedIndex;
+            notify(`${name} is eating ${foodSelect.options[selectedIndex].text}.`);
+        }
     }
     catch (err) {
         console.log('Error while attempting to feed pet')
@@ -257,12 +274,30 @@ async function eat() {
 
 async function goBathroom() {
     // *** TO DO disable buttons, run animation?, enable buttons
-    notify("Pee time!"); // TO DO: notification
+    try {
+        const response = await fetch('/needs/pee', {
+            method: 'GET'
+        });
+        const {result} = await response.json();
+        result ? notify("Pee time!") : notify(`${name}'s bladder is full.`);
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 async function bathe() {
     // *** TO DO disable buttons, run animation?, enable buttons
-    notify("Scrub-a-dub-dub!"); // TO DO: notification
+    try {
+        const response = await fetch('/needs/bathe', {
+            method: 'GET'
+        });
+        const {result} = await response.json();
+        result ? notify("Scrub-a-dub-dub!") : notify(`${name} is already squeaky clean!`);
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 async function socialize() {
@@ -320,13 +355,6 @@ window.addEventListener('beforeunload', () => { // Pause needs decay before leav
 });
 
 /*
-// Disable all buttons, clear all intervals, alert user.
-function endSimulation() {
-    disableButtons();
-    clearInterval(updateId);
-    notify(`${name} has passed away. RIP`);
-}
-
 // Other Functions
 // Will run some action/animation
 function runAnimation() {

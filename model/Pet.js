@@ -42,6 +42,7 @@ export default class Pet {
     getFun() { return this.fun; }
     getAll() {
         const all = {
+            alive: this.alive,
             hunger: this.hunger,
             energy: this.energy,
             bladder: this.bladder,

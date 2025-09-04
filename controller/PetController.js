@@ -18,12 +18,12 @@ function hungerFailure() { // Pause all intervals and set pet's alive attribute 
 
 // DECAY NEEDS
 const DECAY_TIME = { // How fast needs decay // *** TO DO: TWEAK
-    hunger: 30000,
+    hunger: 60000,
     energy: 60000,
-    bladder: 45000,
+    bladder: 60000,
     hygiene: 90000,
-    social: 20000,
-    fun: 25000
+    social: 40000,
+    fun: 22500
 };
 const DECAY_INTERVALS = { // Will hold intervals for decaying needs
     hunger: {},
@@ -33,7 +33,7 @@ const DECAY_INTERVALS = { // Will hold intervals for decaying needs
     social: {},
     fun: {}
 };
-const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs // *** TO DO: clear previous fill interval in event of repeat or prevent repeats by blocking?
+const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
     hunger: function() {
         pet.alterHunger(-1);
         if (pet.hungerEmpty()) {
@@ -104,17 +104,14 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs 
     }
 };
 export const wakeUp = () => DECAY_FUNCTIONS.wakeUp();
-export function startDecay() { // Must be called once page has loaded. If resuming needs decay while page still loaded, use resumeAllDecay() instead
+export function startDecay() { // Resume all decay intervals
+    pauseAllDecay(); // just in case
     DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
     DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
     DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
     DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
     DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
     DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
-}
-function resumeAllDecay() { // Resumes all decay intervals after certain events // *** TO DO: is this redundant? tbd
-    pauseAllDecay(); // just in case
-    startDecay();
 }
 export function pauseAllDecay() { // Pauses all decay intervals
     for (let interval in DECAY_INTERVALS) {
@@ -135,7 +132,7 @@ const FILL_INTERVALS = { // Will hold intervals for needs when being filled.
 const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
     eat: 1500,
     sleep: 5000,
-    pee: 2000,
+    pee: 1500,
     bathe: 3000,
     socialize: 1000,
     play: 3000
@@ -187,7 +184,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
                 clearInterval(FILL_INTERVALS.bladder);
                 DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
             }
-        }, FILL_TIME.bladder);
+        }, FILL_TIME.pee);
         return true;
     },
     bathe: function() {
