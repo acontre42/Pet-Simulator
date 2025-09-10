@@ -11,6 +11,7 @@ const bathroomButton = document.getElementById("bathroom-button");
 const batheButton = document.getElementById("bathe-button");
 const petButton = document.getElementById("pet-button");
 const playButton = document.getElementById("play-button");
+const clearButton = document.getElementById("clear-button");
 // <P>
 const hungerP = document.getElementById("hunger");
 const energyP = document.getElementById("energy");
@@ -22,6 +23,7 @@ const funP = document.getElementById("fun");
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
+const notificationBar = document.getElementById("notification-bar");
 
 // Pet Info Variables
 let name;
@@ -160,15 +162,6 @@ async function updateNeeds() {
         console.log(err);
     }
 }
-// Adds notification to notification bar 
-function notify(msg) {
-    NB.addNotification(msg);
-    const notifications = NB.getNotifications();
-    document.getElementById('notification-div').innerHTML = ``;
-    for (let n of notifications) {
-        document.getElementById('notification-div').innerHTML += `<p class='notification'>${n.toString()}</p>`;
-    }
-}
 // Disable all buttons, clear all intervals, alert user.
 async function endSimulation() {
     fetch('/pet/stop', {
@@ -178,6 +171,23 @@ async function endSimulation() {
     clearInterval(updateId);
     notify(`${name} has passed away. RIP`);
 }
+
+// Notification-related functions
+// Clear notification-bar
+function clearNB() {
+    NB.clear();
+    notificationBar.innerHTML = `<p>No notifications to display.</p>`;
+}
+// Adds notification to notification bar 
+function notify(msg) {
+    NB.addNotification(msg);
+    const notifications = NB.getNotifications();
+    notificationBar.innerHTML = ``;
+    for (let n of notifications) {
+        notificationBar.innerHTML += `<p class='notification'>${n.toString()}</p>`;
+    }
+}
+
 
 // Pet-related Functions
 async function getPetName() {
@@ -347,6 +357,7 @@ async function play() {
 // MAIN
 await getPetName();
 enableButtons(WAKE);
+clearButton.addEventListener('click', clearNB);
 
 await fetch('/pet/start', { // Start needs decay
     method: 'GET'

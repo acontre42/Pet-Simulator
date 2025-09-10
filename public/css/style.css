@@ -39,9 +39,31 @@ footer {
     float: left;
 }
 
+#interact-div {
+    height: 400px;
+}
+
 #notification-div {
-    border: 1px solid white;
+    height: 100%;
     width: 50%;
+    float: right;
+    position: relative;
+}
+
+#notification-div h2 {
+    padding: 0px;
+    margin: 0px;
+}
+
+#clear-button {
+    float: right;
+}
+
+#notification-bar {
+    border: 1px solid white;
+    width: 100%;
+    height: 85%;
+    overflow-y: scroll;
     float: right;
 }
 
