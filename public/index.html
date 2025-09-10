@@ -23,48 +23,54 @@
                 <!--img id="pet-img" src="" alt="Image of pet displayed here."-->
             </div>
 
-            <div id="pet-needs-div">
-                <h2><span class="pet-name"></span>'s Needs:</h2>
-                <p class="pet-needs" id="hunger">Hunger:</p>
-                <p class="pet-needs" id="energy">Energy:</p>
-                <p class="pet-needs" id="bladder">Bladder:</p>
-                <p class="pet-needs" id="hygiene">Hygiene:</p>
-                <p class="pet-needs" id="social">Social:</p>
-                <p class="pet-needs" id="fun">Fun:</p>
-            </div>
+            <div id="interact-div">
+                <div id="pet-needs-div">
+                    <h2><span class="pet-name"></span>'s Needs:</h2>
+                    <p class="pet-needs" id="hunger">Hunger:</p>
+                    <p class="pet-needs" id="energy">Energy:</p>
+                    <p class="pet-needs" id="bladder">Bladder:</p>
+                    <p class="pet-needs" id="hygiene">Hygiene:</p>
+                    <p class="pet-needs" id="social">Social:</p>
+                    <p class="pet-needs" id="fun">Fun:</p>
+                </div>
 
-            <div id="interact-buttons-div">
-                <div id="food-dropdown">
-                    <label for="food-select">Food Options</label>
-                    <select name="food-select" id="food-select">
-                        <option value="1">A Spoonful of Booger</option>
-                        <option value="3">Rubber Flubber</option>
-                        <option value="5">Confetti Spaghetti</option>
-                    </select>
+                <div id="interact-buttons-div">
+                    <div id="food-dropdown">
+                        <label for="food-select">Food Options</label>
+                        <select name="food-select" id="food-select">
+                            <option value="1">A Spoonful of Booger</option>
+                            <option value="3">Rubber Flubber</option>
+                            <option value="5">Confetti Spaghetti</option>
+                        </select>
+                    </div>
+                    <button class="interact" id="feed-button">Feed</button>
+                    <button class="interact" id="sleep-button">Bedtime</button>
+                    <button class="interact unclickable" id="wake-button">Wake Up</button>
+                    <button class="interact" id="bathroom-button">Let Out To Pee</button>
+                    <button class="interact" id="bathe-button">Bathe</button>
+                    <div id="pet-dropdown">
+                        <label for="pet-select">Pet Options</label>
+                        <select name="pet-select" id="pet-select">
+                            <option value="2">Head Pat</option>
+                            <option value="4">Chin Scratch</option>
+                            <option value="6">Belly Rub</option>
+                        </select>
+                    </div>
+                    <button class="interact" id="pet-button">Pet</button>
+                    <div id="play-dropdown">
+                        <label for="play-select">Play Options</label>
+                        <select name="play-select" id="play-select">
+                            <option value="1">Give Chew Toy</option>
+                            <option value="2">Fetch Rock</option>
+                            <option value="3">Tug-o-intergalactic-war</option>
+                        </select>
+                    </div>
+                    <button class="interact" id="play-button">Play</button>
                 </div>
-                <button class="interact" id="feed-button">Feed</button>
-                <button class="interact" id="sleep-button">Bedtime</button>
-                <button class="interact unclickable" id="wake-button">Wake Up</button>
-                <button class="interact" id="bathroom-button">Let Out To Pee</button>
-                <button class="interact" id="bathe-button">Bathe</button>
-                <div id="pet-dropdown">
-                    <label for="pet-select">Pet Options</label>
-                    <select name="pet-select" id="pet-select">
-                        <option value="2">Head Pat</option>
-                        <option value="4">Chin Scratch</option>
-                        <option value="6">Belly Rub</option>
-                    </select>
+
+                <div id="notification-div">
+                    <!-- Notification Bar -->
                 </div>
-                <button class="interact" id="pet-button">Pet</button>
-                <div id="play-dropdown">
-                    <label for="play-select">Play Options</label>
-                    <select name="play-select" id="play-select">
-                        <option value="1">Give Chew Toy</option>
-                        <option value="2">Fetch Rock</option>
-                        <option value="3">Tug-o-intergalactic-war</option>
-                    </select>
-                </div>
-                <button class="interact" id="play-button">Play</button>
             </div>
         </main>
         <footer>

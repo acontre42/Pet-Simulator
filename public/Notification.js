@@ -15,9 +15,12 @@ export class Notification {
         let hours = this.date.getHours();
         const meridiem = ( hours < 12 ? "am" : "pm");
         hours %= 12;
+        if (hours == 0) {
+            hours = 12;
+        }
         const minutes = this.date.getMinutes();
         
-        return `${hours}:${minutes} ${meridiem} // ${this.message}`;
+        return `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${meridiem} // ${this.message}`;
     }
 }
 

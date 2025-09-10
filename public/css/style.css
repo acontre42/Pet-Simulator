@@ -20,6 +20,10 @@ button, select {
     font-family: 'Lucida Console';
 }
 
+body {
+    position: relative;
+}
+
 footer {
     width: 100%;
     position: absolute;
@@ -29,4 +33,21 @@ footer {
 .unclickable {
     cursor: default;
     text-decoration: line-through;
+}
+
+#pet-needs-div, #interact-buttons-div {
+    float: left;
+}
+
+#notification-div {
+    border: 1px solid white;
+    width: 50%;
+    float: right;
+}
+
+.notification {
+    border-width: 0px 0px 1px 0px;
+    border-color: white;
+    border-style: dashed;
+    padding: 0.5rem;
 }

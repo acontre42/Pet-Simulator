@@ -160,8 +160,14 @@ async function updateNeeds() {
         console.log(err);
     }
 }
+// Adds notification to notification bar 
 function notify(msg) {
-    console.log(msg); // *** TO DO: add notification to future notification box
+    NB.addNotification(msg);
+    const notifications = NB.getNotifications();
+    document.getElementById('notification-div').innerHTML = ``;
+    for (let n of notifications) {
+        document.getElementById('notification-div').innerHTML += `<p class='notification'>${n.toString()}</p>`;
+    }
 }
 // Disable all buttons, clear all intervals, alert user.
 async function endSimulation() {
