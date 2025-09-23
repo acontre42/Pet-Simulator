@@ -228,7 +228,7 @@ async function rename() {
 }
 
 async function wakeUp() {
-    // *** TO DO enable buttons, run animation?
+    // *** TO DO: run animation?
     try {
         const response = await fetch('/needs/wake', {
             method: 'GET'
@@ -246,7 +246,7 @@ async function wakeUp() {
 }
 
 async function sleep() {
-    // *** TO DO disable buttons, run animation?, enable buttons
+    // *** TO DO: run animation?
     try {
         const response = await fetch('/needs/sleep', {
             method: 'GET'
@@ -267,7 +267,7 @@ async function sleep() {
 }
 
 async function eat() {
-    // ***TO DO*** disable buttons, run animation?, enable buttons
+    // ***TO DO*** run animation?
     let food_value = +foodSelect.value; // Unary + makes operand into a number
     try {
         const response = await fetch('/needs/eat', {
@@ -289,7 +289,7 @@ async function eat() {
 }
 
 async function goBathroom() {
-    // *** TO DO disable buttons, run animation?, enable buttons
+    // *** TO DO: run animation?
     try {
         const response = await fetch('/needs/pee', {
             method: 'GET'
@@ -303,7 +303,7 @@ async function goBathroom() {
 }
 
 async function bathe() {
-    // *** TO DO disable buttons, run animation?, enable buttons
+    // *** TO DO: run animation?
     try {
         const response = await fetch('/needs/bathe', {
             method: 'GET'
@@ -317,7 +317,7 @@ async function bathe() {
 }
 
 async function socialize() {
-    // ***TO DO*** disable buttons, run animation?, enable buttons
+    // ***TO DO*** run animation?
     let social_value = +petSelect.value;
     try {
         const response = await fetch('/needs/socialize', {
@@ -328,7 +328,10 @@ async function socialize() {
             body: JSON.stringify({value: social_value})
         });
         const result = await response.json();
-        console.log(result); // *** DELETE
+        if (result) {
+            let selectedIndex = petSelect.selectedIndex;
+            notify(`${name} loves the feeling of a good ${petSelect.options[selectedIndex].text}.`);
+        }
     }
     catch (err) {
         console.log('Error while attempting to socialize with pet')
@@ -336,7 +339,7 @@ async function socialize() {
 }
 
 async function play() {
-    // ***TO DO*** disable buttons, run animation?, enable buttons
+    // ***TO DO*** run animation?
     let fun_value = +playSelect.value;
     try {
         const response = await fetch('/needs/play', {
@@ -347,7 +350,9 @@ async function play() {
             body: JSON.stringify({value: fun_value})
         });
         const result = await response.json();
-        console.log(result); // *** DELETE
+        if (result) {
+            notify(`${name} is excited to play!`);
+        }
     }
     catch (err) {
         console.log('Error while attempting to socialize with pet')
