@@ -12,6 +12,9 @@ const batheButton = document.getElementById("bathe-button");
 const petButton = document.getElementById("pet-button");
 const playButton = document.getElementById("play-button");
 const clearButton = document.getElementById("clear-button");
+const renameButton = document.getElementById("rename-button");
+const saveButton = document.getElementById("save-button");
+const cancelButton = document.getElementById("cancel-button");
 // <P>
 const hungerP = document.getElementById("hunger");
 const energyP = document.getElementById("energy");
@@ -24,6 +27,7 @@ const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
 const notificationBar = document.getElementById("notification-bar");
+const renameInput = document.getElementById("rename-input");
 
 // Pet Info Variables
 let name;
@@ -123,6 +127,23 @@ function disableSpecificButton(needCode) {
 }
 
 // Display-related Functions
+// Display input and buttons related to name change
+function showRenameElems() {
+    const renameElems = document.getElementsByClassName("rename");
+    for (let elem of renameElems) {
+        elem.hidden = false;
+    }
+    renameButton.hidden = true;
+}
+// Hide input and buttons related to name change
+function hideRenameElems() {
+    renameInput.value = '';
+    const renameElems = document.getElementsByClassName("rename");
+    for (let elem of renameElems) {
+        elem.hidden = true;
+    }
+    renameButton.hidden = false;
+}
 // Update all elements classed as pet-name with pet name
 function updateNameDisplay() {
     const elems = document.querySelectorAll('.pet-name');
@@ -205,7 +226,7 @@ async function getPetName() {
 }
 
 async function rename() {
-    let newName = ''; // *** TO DO: get name value from future input
+    let newName = renameInput.value;
     try {
         const response = await fetch('/pet/name', {
             method: 'PATCH',
@@ -217,9 +238,10 @@ async function rename() {
         const {result} = await response.json();
         if (result) {
             await getPetName();
+            hideRenameElems();
         }
         else {
-            console.log('There was an error renaming your pet');
+            alert('There was an error renaming your pet. Name must be between 1-10 characters and contain at least one letter.');
         }
     }
     catch (err) {
@@ -363,6 +385,9 @@ async function play() {
 await getPetName();
 enableButtons(WAKE);
 clearButton.addEventListener('click', clearNB);
+renameButton.addEventListener('click', showRenameElems);
+cancelButton.addEventListener('click', hideRenameElems);
+saveButton.addEventListener('click', rename);
 
 await fetch('/pet/start', { // Start needs decay
     method: 'GET'
