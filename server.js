@@ -19,7 +19,7 @@ app.get('/pet/start', (req, res) => {
 
 app.get('/pet/stop', (req, res) => {
     PetController.pauseAllDecay();
-    PetController.pauseAllFill();
+    PetController.pauseFill();
     res.status(200).send();
 })
 

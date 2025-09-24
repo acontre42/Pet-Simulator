@@ -98,7 +98,7 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         if (!pet.isAlive()) {
             return false;
         }
-        clearInterval(FILL_INTERVALS.sleep);
+        clearInterval(FILL_INTERVAL);
         DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
         return true;
     }
@@ -121,14 +121,7 @@ export function pauseAllDecay() { // Pauses all decay intervals
 
 
 // FILL NEEDS
-const FILL_INTERVALS = { // Will hold intervals for needs when being filled.
-    eat: {},
-    sleep: {},
-    pee: {},
-    bathe: {},
-    socialize: {},
-    play: {}
-};
+let FILL_INTERVAL = {}; // Will hold interval for the need currently being filled.
 const FILL_TIME = { // Rate at which needs fill // *** TO DO: TWEAK
     eat: 1500,
     sleep: 5000,
@@ -142,15 +135,16 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
+        clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.hunger); // Stop hunger decay
         let food = value;
-        FILL_INTERVALS.eat = setInterval(() => { // Gradually fill hunger need while there is food remaining
+        FILL_INTERVAL = setInterval(() => { // Gradually fill hunger need while there is food remaining
             if (food > 0) {
                 pet.alterHunger(1);
                 food--;
             }
             else {
-                clearInterval(FILL_INTERVALS.eat);
+                clearInterval(FILL_INTERVAL);
                 DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
             }
         }, FILL_TIME.eat);
@@ -160,8 +154,9 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || pet.energyFilled()) {
             return false;
         }
+        clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.energy); // Stop energy decay
-        FILL_INTERVALS.sleep = setInterval(() => { 
+        FILL_INTERVAL = setInterval(() => { 
             if (!pet.energyFilled()) { // Gradually fill energy need
                 pet.alterEnergy(1);
             }
@@ -175,13 +170,14 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || pet.bladderFilled()) {
             return false;
         }
+        clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.bladder); // Stop bladder decay
-        FILL_INTERVALS.pee = setInterval(() => {
+        FILL_INTERVAL = setInterval(() => {
             if (!pet.bladderFilled()) { // Gradually fill bladder need
                 pet.alterBladder(1);
             }
             else { // Clear pee interval and resume bladder decay
-                clearInterval(FILL_INTERVALS.bladder);
+                clearInterval(FILL_INTERVAL);
                 DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
             }
         }, FILL_TIME.pee);
@@ -191,13 +187,14 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || pet.hygieneFilled()) {
             return false;
         }
+        clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.hygiene); // Stop hygiene decay
-        FILL_INTERVALS.bathe = setInterval(() => {
+        FILL_INTERVAL = setInterval(() => {
             if (!pet.hygieneFilled()) { // Gradually fill hygiene need
                 pet.alterHygiene(1);
             }
             else { // Clear bathe interval and resume hygiene decay
-                clearInterval(FILL_INTERVALS.bathe);
+                clearInterval(FILL_INTERVAL);
                 DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
             }
         }, FILL_TIME.bathe);
@@ -207,15 +204,16 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
+        clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.social); // Stop social need decay
         let hangout = value;
-        FILL_INTERVALS.socialize = setInterval(() => { // Gradually fill social need while interaction remains
+        FILL_INTERVAL = setInterval(() => { // Gradually fill social need while interaction remains
             if (hangout > 0) {
                 pet.alterSocial(1);
                 hangout--;
             }
             else { // Clear socialize interval and resume social decay
-                clearInterval(FILL_INTERVALS.socialize);
+                clearInterval(FILL_INTERVAL);
                 DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
             }
         }, FILL_TIME.socialize);
@@ -225,27 +223,29 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
+        clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.fun); // Stop fun need decay
         let playtime = value;
-        FILL_INTERVALS.play = setInterval(() => { // Gradually fill fun need while playtime remains
+        FILL_INTERVAL = setInterval(() => { // Gradually fill fun need while playtime remains
             if (playtime > 0) {
                 pet.alterFun(1);
                 playtime--;
             }
             else { // Clear play interval and resume fun decay
-                clearInterval(FILL_INTERVALS.play);
+                clearInterval(FILL_INTERVAL);
                 DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
             }
         }, FILL_TIME.play);
         return true;
     }
 }
-export function pauseAllFill() { // Pauses all fill intervals
-    for (let interval in FILL_INTERVALS) {
-        clearInterval(FILL_INTERVALS[interval]);
-    }
+export function pauseFill() { // Pauses fill interval, does not affect decay intervals
+    clearInterval(FILL_INTERVAL);
 }
-
+export function clearCurrentFill() { // Clear current fill interval, restart all decay to avoid doubled/dead decay intervals
+    clearInterval(FILL_INTERVAL);
+    startDecay(); // Pauses all decay and restarts them
+}
 
 // PET 
 export const getName = () => pet.getName();
