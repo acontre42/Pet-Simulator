@@ -43,6 +43,7 @@ export default class Pet {
     getAll() {
         const all = {
             alive: this.alive,
+            stinky: this.hygiene < 4,
             hunger: this.hunger,
             energy: this.energy,
             bladder: this.bladder,
@@ -122,7 +123,6 @@ export default class Pet {
     energyEmpty() { return (this.energy == MIN_NEEDS); }
     hungerEmpty() { return (this.hunger == MIN_NEEDS); }
     bladderEmpty() { return (this.bladder == MIN_NEEDS); }
-    hygieneLow() { return (this.hygiene < 4); }
     socialEmpty() { return (this.social == MIN_NEEDS); }
     funEmpty() { return (this.fun == MIN_NEEDS); }
     energyFilled() { return (this.energy == MAX_NEEDS); }

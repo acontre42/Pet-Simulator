@@ -34,6 +34,7 @@ let name;
 
 // Comparison Variables
 let priorEnergy = 0; // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
+let priorStinky = false; // To compare to updated values in order to display visible stink
 
 // Button-related Variables
 const WAKE = -1, HUNGER = 0, ENERGY = 1, BLADDER = 2, HYGIENE = 3, SOCIAL = 4, FUN = 5; // CODES FOR SPECIFIC NEEDS
@@ -172,12 +173,23 @@ async function updateNeeds() {
             await endSimulation();
             return;
         }
-        // Compare to prior values
+        // Compare energy to prior value
         console.log(`prior: ${priorEnergy}, current: ${energy}`); // *** DELETE
         if (energy == max && energy != priorEnergy) {
             wakeUp();
         }
         priorEnergy = energy;
+        // Compare hygiene to prior status
+        const {stinky} = data;
+        if (priorStinky == false && stinky == true) {
+            // *** TO DO: add visible dirt
+            console.log('STINKY'); // *** DELETE
+        }
+        if (priorStinky == true && stinky == false) {
+            // *** TO DO: remove visible dirt
+            console.log('CLEAN NOW'); // *** DELETE
+        }
+        priorStinky = stinky;
     }
     catch (err) {
         console.log(err);
