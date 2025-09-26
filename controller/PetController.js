@@ -2,7 +2,7 @@ import Pet from '../model/Pet.js';
 const pet = new Pet();
 
 // NEED FAILURES
-const MAX_FAILURE_HUNGER = 10, MAX_FAILURE_ENERGY = 15, MAX_FAILURE_SOCIAL = 25, MAX_FAILURE_FUN = 5; // ***TO DO*** TWEAK
+const MAX_FAILURE_HUNGER = 10, MAX_FAILURE_ENERGY = 5, MAX_FAILURE_SOCIAL = 25, MAX_FAILURE_FUN = 5; // ***TO DO*** TWEAK
 const FAILURE_COUNTS = {
     hunger: 0,
     energy: 0,
@@ -11,7 +11,7 @@ const FAILURE_COUNTS = {
 };
 function hungerFailure() { // Pause all intervals and set pet's alive attribute to false
     pauseAllDecay();
-    pauseAllFill();
+    pauseFill();
     pet.loss();
 }
 
@@ -39,11 +39,9 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         if (pet.hungerEmpty()) {
             FAILURE_COUNTS.hunger++;
             if (FAILURE_COUNTS.hunger == MAX_FAILURE_HUNGER) {
+                console.log('HUNGER FAILURE'); // *** DELETE
                 hungerFailure();
             }
-        }
-        else {
-            FAILURE_COUNTS.hunger = 0;
         }
     },
     energy: function() {
@@ -52,23 +50,20 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
             FAILURE_COUNTS.energy++;
             if (FAILURE_COUNTS.energy == MAX_FAILURE_ENERGY) {
                 // *** TO DO: trigger energy failure
+                console.log('ENERGY FAILURE'); // *** DELETE
             }
         }
-        else {
-            FAILURE_COUNTS.energy = 0;
-        }
+        console.log('energy fail count after decay: ', FAILURE_COUNTS.energy); // *** DELETE
     },
     bladder: function() {
         pet.alterBladder(-1);
         if (pet.bladderEmpty()) {
+            console.log('BLADDER FAILURE'); // *** DELETE
             pet.bladderFailure();
         }
     },
     hygiene: function() {
         pet.alterHygiene(-1);
-        if (pet.hygieneLow()) {
-            // *** TO DO: trigger stinky
-        }
     },
     social: function() {
         pet.alterSocial(-1);
@@ -76,11 +71,10 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
             FAILURE_COUNTS.social++;
             if (FAILURE_COUNTS.social == MAX_FAILURE_SOCIAL) {
                 // *** TO DO: trigger social failure
+                console.log('SOCIAL FAILURE'); // *** DELETE
             }
         }
-        else {
-            FAILURE_COUNTS.social = 0;
-        }
+        console.log('social fail count after decay: ', FAILURE_COUNTS.social); // *** DELETE
     },
     fun: function() {
         pet.alterFun(-1);
@@ -88,11 +82,10 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
             FAILURE_COUNTS.fun++;
             if (FAILURE_COUNTS.fun == MAX_FAILURE_FUN) {
                 // *** TO DO: fun failure
+                console.log('FUN FAILURE'); // *** DELETE
             }
         }
-        else {
-            FAILURE_COUNTS.fun = 0;
-        }
+        console.log('fun fail count after decay: ', FAILURE_COUNTS.fun); // *** DELETE
     },
     wakeUp: function() {
         if (!pet.isAlive()) {
@@ -135,6 +128,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
+        FAILURE_COUNTS.hunger = 0; // Reset hunger fail count
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.hunger); // Stop hunger decay
         let food = value;
@@ -154,6 +148,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || pet.energyFilled()) {
             return false;
         }
+        FAILURE_COUNTS.energy = 0; // Reset energy fail count
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.energy); // Stop energy decay
         FILL_INTERVAL = setInterval(() => { 
@@ -204,6 +199,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
+        FAILURE_COUNTS.social = 0; // Reset social fail count
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.social); // Stop social need decay
         let hangout = value;
@@ -223,6 +219,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         if (!pet.isAlive() || typeof value !== 'number') {
             return false;
         }
+        FAILURE_COUNTS.fun = 0; // Reset fun fail count
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.fun); // Stop fun need decay
         let playtime = value;
