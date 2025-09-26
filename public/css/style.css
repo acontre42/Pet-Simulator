@@ -10,16 +10,6 @@ html {
     letter-spacing: 15px;
 }
 
-#pet-bg {
-    border-radius: 5px;
-    max-width: 100%;
-    height: auto;
-}
-
-button, select {
-    font-family: 'Lucida Console';
-}
-
 body {
     position: relative;
 }
@@ -28,6 +18,33 @@ footer {
     width: 100%;
     position: absolute;
     bottom: 0;
+}
+
+#pet-display-div {
+    max-width: 100%;
+    height: auto;
+    position: relative;
+}
+
+#pet-bg {
+    border-radius: 5px;
+    max-width: 100%;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#pet-img {
+    position: relative;
+    height: 30%;
+    width: 30%;
+    z-index: 1;
+    transform: translate(125%, 0%);
+}
+
+button, select {
+    font-family: 'Lucida Console';
 }
 
 .unclickable {
@@ -41,6 +58,10 @@ footer {
 
 #interact-div {
     height: 400px;
+}
+
+#interact-div div {
+    margin: 5px;
 }
 
 #notification-div {
