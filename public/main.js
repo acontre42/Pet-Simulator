@@ -40,7 +40,7 @@ const WAKE = -1, HUNGER = 0, ENERGY = 1, BLADDER = 2, HYGIENE = 3, SOCIAL = 4, F
 const NEED_CODES = [WAKE, HUNGER, ENERGY, BLADDER, HYGIENE, SOCIAL, FUN];
 const UNCLICKABLE = "unclickable";
 
-// Button Functionality-related Functions
+// BUTTON FUNCTIONALITY-RELATED FUNCTIONS
 // Make all buttons unclickable. If an exception is provided, skip it.
 function disableButtons(exception) {
     for (let i = 0; i < NEED_CODES.length; i++) {
@@ -126,7 +126,7 @@ function disableSpecificButton(needCode) {
     }
 }
 
-// Display-related Functions
+// DISPLAY-RELATED FUNCTIONS
 // Display input and buttons related to name change
 function showRenameElems() {
     const renameElems = document.getElementsByClassName("rename");
@@ -158,12 +158,6 @@ async function updateNeeds() {
             method: 'GET'
         });
         const data = await response.json();
-        // End simulation if no longer alive
-        const {alive} = data;
-        if (!alive) {
-            await endSimulation();
-            return;
-        }
         // Update text
         const {hunger, energy, bladder, hygiene, social, fun, max} = data;
         hungerP.innerText = `Hunger: ${hunger} / ${max}`,
@@ -172,6 +166,12 @@ async function updateNeeds() {
         hygieneP.innerText = `Hygiene: ${hygiene} / ${max}`,
         socialP.innerText = `Social: ${social} / ${max}`,
         funP.innerText = `Fun: ${fun} / ${max}`
+        // End simulation if no longer alive
+        const {alive} = data;
+        if (!alive) {
+            await endSimulation();
+            return;
+        }
         // Compare to prior values
         console.log(`prior: ${priorEnergy}, current: ${energy}`); // *** DELETE
         if (energy == max && energy != priorEnergy) {
@@ -190,10 +190,17 @@ async function endSimulation() {
     });
     disableButtons();
     clearInterval(updateId);
+    document.getElementById('pet-img').src = '/images/pets/Gravestone.png';
     notify(`${name} has passed away. RIP`);
 }
+/*
+// Will run some action/animation
+function runAnimation() {
+    // ***TO DO***
+}
+*/
 
-// Notification-related functions
+// NOTIFICATION-RELATED FUNCTIONS
 // Clear notification-bar
 function clearNB() {
     NB.clear();
@@ -209,8 +216,7 @@ function notify(msg) {
     }
 }
 
-
-// Pet-related Functions
+// NAME-RELATED FUNCTIONS
 async function getPetName() {
     try {
         const response = await fetch('/pet/name', {
@@ -224,7 +230,7 @@ async function getPetName() {
         console.log(err);
     }
 }
-
+// Change pet's name if valid and successful
 async function rename() {
     let newName = renameInput.value;
     try {
@@ -249,45 +255,20 @@ async function rename() {
     }
 }
 
-async function wakeUp() {
+// PET CARE-RELATED FUNCTIONS
+async function bathe() {
     // *** TO DO: run animation?
     try {
-        const response = await fetch('/needs/wake', {
+        const response = await fetch('/needs/bathe', {
             method: 'GET'
         });
         const {result} = await response.json();
-        if (result) {
-            notify(`${name} has woken up.`);
-            disableSpecificButton(WAKE);
-            enableButtons(WAKE);
-        }
+        result ? notify("Scrub-a-dub-dub!") : notify(`${name} is already squeaky clean!`);
     }
     catch (err) {
         console.log(err);
     }
 }
-
-async function sleep() {
-    // *** TO DO: run animation?
-    try {
-        const response = await fetch('/needs/sleep', {
-            method: 'GET'
-        });
-        const {result} = await response.json();
-        if (result) {
-            disableButtons();
-            enableSpecificButton(WAKE);
-            notify(`${name} has gone to sleep.`);
-        }
-        else {
-            notify(`${name} is not tired.`);
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
-
 async function eat() {
     // ***TO DO*** run animation?
     let food_value = +foodSelect.value; // Unary + makes operand into a number
@@ -309,7 +290,6 @@ async function eat() {
         console.log('Error while attempting to feed pet')
     }
 }
-
 async function goBathroom() {
     // *** TO DO: run animation?
     try {
@@ -323,21 +303,46 @@ async function goBathroom() {
         console.log(err);
     }
 }
-
-async function bathe() {
+async function play() {
+    // ***TO DO*** run animation?
+    let fun_value = +playSelect.value;
+    try {
+        const response = await fetch('/needs/play', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({value: fun_value})
+        });
+        const result = await response.json();
+        if (result) {
+            notify(`${name} is excited to play!`);
+        }
+    }
+    catch (err) {
+        console.log('Error while attempting to socialize with pet')
+    }
+}
+async function sleep() {
     // *** TO DO: run animation?
     try {
-        const response = await fetch('/needs/bathe', {
+        const response = await fetch('/needs/sleep', {
             method: 'GET'
         });
         const {result} = await response.json();
-        result ? notify("Scrub-a-dub-dub!") : notify(`${name} is already squeaky clean!`);
+        if (result) {
+            disableButtons();
+            enableSpecificButton(WAKE);
+            notify(`${name} has gone to sleep.`);
+        }
+        else {
+            notify(`${name} is not tired.`);
+        }
     }
     catch (err) {
         console.log(err);
     }
 }
-
 async function socialize() {
     // ***TO DO*** run animation?
     let social_value = +petSelect.value;
@@ -359,27 +364,24 @@ async function socialize() {
         console.log('Error while attempting to socialize with pet')
     }
 }
-
-async function play() {
-    // ***TO DO*** run animation?
-    let fun_value = +playSelect.value;
+async function wakeUp() {
+    // *** TO DO: run animation?
     try {
-        const response = await fetch('/needs/play', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({value: fun_value})
+        const response = await fetch('/needs/wake', {
+            method: 'GET'
         });
-        const result = await response.json();
+        const {result} = await response.json();
         if (result) {
-            notify(`${name} is excited to play!`);
+            notify(`${name} has woken up.`);
+            disableSpecificButton(WAKE);
+            enableButtons(WAKE);
         }
     }
     catch (err) {
-        console.log('Error while attempting to socialize with pet')
+        console.log(err);
     }
 }
+
 
 // MAIN
 await getPetName();
@@ -395,16 +397,8 @@ await fetch('/pet/start', { // Start needs decay
 
 const updateId = setInterval(() => updateNeeds(), 500);
 
-window.addEventListener('beforeunload', () => { // Pause needs decay before leaving
+window.addEventListener('beforeunload', () => { // Pause decay/fill intervals before leaving
     fetch('/pet/stop', {
         method: 'GET'
     });
 });
-
-/*
-// Other Functions
-// Will run some action/animation
-function runAnimation() {
-    // ***TO DO***
-}
-*/
