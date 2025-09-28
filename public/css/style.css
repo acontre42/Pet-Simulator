@@ -43,6 +43,14 @@ footer {
     transform: translate(125%, 0%);
 }
 
+#stink-img {
+    position: relative;
+    height: 30%;
+    width: 30%;
+    z-index: 2;
+    transform: translate(25%, 0%);
+}
+
 button, select {
     font-family: 'Lucida Console';
 }

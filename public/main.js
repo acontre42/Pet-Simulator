@@ -28,13 +28,13 @@ const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
 const notificationBar = document.getElementById("notification-bar");
 const renameInput = document.getElementById("rename-input");
+const stinkImg = document.getElementById("stink-img");
 
 // Pet Info Variables
 let name;
 
 // Comparison Variables
 let priorEnergy = 0; // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
-let priorStinky = false; // To compare to updated values in order to display visible stink
 
 // Button-related Variables
 const WAKE = -1, HUNGER = 0, ENERGY = 1, BLADDER = 2, HYGIENE = 3, SOCIAL = 4, FUN = 5; // CODES FOR SPECIFIC NEEDS
@@ -135,6 +135,7 @@ function showRenameElems() {
         elem.hidden = false;
     }
     renameButton.hidden = true;
+    renameInput.focus();
 }
 // Hide input and buttons related to name change
 function hideRenameElems() {
@@ -179,17 +180,9 @@ async function updateNeeds() {
             wakeUp();
         }
         priorEnergy = energy;
-        // Compare hygiene to prior status
+        // Check if stinky
         const {stinky} = data;
-        if (priorStinky == false && stinky == true) {
-            // *** TO DO: add visible dirt
-            console.log('STINKY'); // *** DELETE
-        }
-        if (priorStinky == true && stinky == false) {
-            // *** TO DO: remove visible dirt
-            console.log('CLEAN NOW'); // *** DELETE
-        }
-        priorStinky = stinky;
+        stinkImg.hidden = (stinky === true ? false : true);
     }
     catch (err) {
         console.log(err);
