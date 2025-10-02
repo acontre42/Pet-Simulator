@@ -1,5 +1,6 @@
 *.txt
 *.dev
+public/images/sketches
 
 # Dependency directories
 node_modules/
