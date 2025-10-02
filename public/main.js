@@ -28,6 +28,7 @@ const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
 const notificationBar = document.getElementById("notification-bar");
 const renameInput = document.getElementById("rename-input");
+const petImg = document.getElementById("pet-img");
 const stinkImg = document.getElementById("stink-img");
 
 // Pet Info Variables
@@ -188,22 +189,20 @@ async function updateNeeds() {
         console.log(err);
     }
 }
-// Disable all buttons, clear all intervals, alert user.
+// Disable all buttons, clear all intervals, hide existing effects, alert user.
 async function endSimulation() {
     fetch('/pet/stop', {
         method: 'GET'
     });
+    const effects = document.getElementsByClassName("effects");
+    for (let effect of effects) {
+        effect.hidden = true;
+    }
     disableButtons();
     clearInterval(updateId);
     document.getElementById('pet-img').src = '/images/pets/Gravestone.png';
     notify(`${name} has passed away. RIP`);
 }
-/*
-// Will run some action/animation
-function runAnimation() {
-    // ***TO DO***
-}
-*/
 
 // NOTIFICATION-RELATED FUNCTIONS
 // Clear notification-bar
@@ -336,6 +335,7 @@ async function sleep() {
         });
         const {result} = await response.json();
         if (result) {
+            petImg.src = '/images/pets/Sleep.png';
             disableButtons();
             enableSpecificButton(WAKE);
             notify(`${name} has gone to sleep.`);
@@ -377,6 +377,7 @@ async function wakeUp() {
         });
         const {result} = await response.json();
         if (result) {
+            petImg.src = '/images/pets/Alien.png';
             notify(`${name} has woken up.`);
             disableSpecificButton(WAKE);
             enableButtons(WAKE);
