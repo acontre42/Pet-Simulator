@@ -210,7 +210,7 @@ function clearNB() {
     NB.clear();
     notificationBar.innerHTML = `<p>No notifications to display.</p>`;
 }
-// Adds notification to notification bar 
+// Adds notification to notification bar. Scrolls to bottom of notification bar
 function notify(msg) {
     NB.addNotification(msg);
     const notifications = NB.getNotifications();
@@ -218,6 +218,7 @@ function notify(msg) {
     for (let n of notifications) {
         notificationBar.innerHTML += `<p class='notification'>${n.toString()}</p>`;
     }
+    notificationBar.scrollTop = notificationBar.scrollHeight;
 }
 
 // NAME-RELATED FUNCTIONS
