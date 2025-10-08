@@ -37,6 +37,7 @@ let name;
 
 // Comparison Variables
 let priorEnergy = 0; // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
+let priorHunger = 10; // To compare to updated value in order to warn user if pet's hunger reaches 0
 let priorStatus; // For pet-img updating purposes
 
 // Button-related Variables
@@ -182,6 +183,11 @@ async function updateNeeds() {
             wakeUp();
         }
         priorEnergy = energy;
+        // Notify if hungry
+        if (hunger < 4 && priorHunger >= 4) {
+            notify(`${name} is getting hungry!`);
+        }
+        priorHunger = hunger;
         // Check if stinky
         const {stinky} = data;
         stinkImg.hidden = (stinky === true ? false : true);
@@ -191,10 +197,10 @@ async function updateNeeds() {
             console.log('new status: ', status); // *** DELETE
             setPetImg(status);
             if (status == null) { // Pet was previously doing an activity, and is now back to neutral
-                clearActiveEffect(); // *** TO DO: move?
+                clearActiveEffect();
             }
         }
-        priorStatus = status; // *** TO DO: move?
+        priorStatus = status;
     }
     catch (err) {
         console.log(err);
