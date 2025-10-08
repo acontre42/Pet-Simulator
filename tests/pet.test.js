@@ -3,7 +3,7 @@ import Pet from '../model/Pet.js';
 
 describe('Testing Pet class methods', () => {
     const pet = new Pet();
-    const {min, max} = pet.getAll();
+    const {min, max} = pet.getInfo();
 
     test('Ensure that Pet only accepts names with at least one letter and no more than 10 characters', () => {
         const name = pet.getName();

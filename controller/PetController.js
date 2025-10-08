@@ -18,10 +18,10 @@ function hungerFailure() { // Pause all intervals and set pet's alive attribute 
 
 // DECAY NEEDS
 const DECAY_TIME = { // How fast needs decay // *** TO DO: TWEAK
-    hunger: 60000,
+    hunger: 7000/*60000*/,
     energy: 60000,
     bladder: 60000,
-    hygiene: 90000,
+    hygiene: 5000/*90000*/,
     social: 40000,
     fun: 22500
 };
@@ -92,6 +92,7 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
             return false;
         }
         clearInterval(FILL_INTERVAL);
+        pet.setStatusNeutral(); // ***
         DECAY_INTERVALS.energy = setInterval(() => DECAY_FUNCTIONS.energy(), DECAY_TIME.energy);
         return true;
     }
@@ -131,6 +132,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         FAILURE_COUNTS.hunger = 0; // Reset hunger fail count
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.hunger); // Stop hunger decay
+        pet.setStatusEat(); // ***
         let food = value;
         FILL_INTERVAL = setInterval(() => { // Gradually fill hunger need while there is food remaining
             if (food > 0) {
@@ -139,6 +141,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
             }
             else {
                 clearInterval(FILL_INTERVAL);
+                pet.setStatusNeutral(); // ***
                 DECAY_INTERVALS.hunger = setInterval(() => DECAY_FUNCTIONS.hunger(), DECAY_TIME.hunger);
             }
         }, FILL_TIME.eat);
@@ -151,6 +154,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         FAILURE_COUNTS.energy = 0; // Reset energy fail count
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.energy); // Stop energy decay
+        pet.setStatusSleep(); // ***
         FILL_INTERVAL = setInterval(() => { 
             if (!pet.energyFilled()) { // Gradually fill energy need
                 pet.alterEnergy(1);
@@ -167,12 +171,14 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         }
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.bladder); // Stop bladder decay
+        pet.setStatusPee(); // ***
         FILL_INTERVAL = setInterval(() => {
             if (!pet.bladderFilled()) { // Gradually fill bladder need
                 pet.alterBladder(1);
             }
             else { // Clear pee interval and resume bladder decay
                 clearInterval(FILL_INTERVAL);
+                pet.setStatusNeutral(); // ***
                 DECAY_INTERVALS.bladder = setInterval(() => DECAY_FUNCTIONS.bladder(), DECAY_TIME.bladder);
             }
         }, FILL_TIME.pee);
@@ -184,12 +190,14 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         }
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.hygiene); // Stop hygiene decay
+        pet.setStatusBathe(); // ***
         FILL_INTERVAL = setInterval(() => {
             if (!pet.hygieneFilled()) { // Gradually fill hygiene need
                 pet.alterHygiene(1);
             }
             else { // Clear bathe interval and resume hygiene decay
                 clearInterval(FILL_INTERVAL);
+                pet.setStatusNeutral(); // ***
                 DECAY_INTERVALS.hygiene = setInterval(() => DECAY_FUNCTIONS.hygiene(), DECAY_TIME.hygiene);
             }
         }, FILL_TIME.bathe);
@@ -202,6 +210,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         FAILURE_COUNTS.social = 0; // Reset social fail count
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.social); // Stop social need decay
+        pet.setStatusSocial(); // ***
         let hangout = value;
         FILL_INTERVAL = setInterval(() => { // Gradually fill social need while interaction remains
             if (hangout > 0) {
@@ -210,6 +219,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
             }
             else { // Clear socialize interval and resume social decay
                 clearInterval(FILL_INTERVAL);
+                pet.setStatusNeutral(); // ***
                 DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
             }
         }, FILL_TIME.socialize);
@@ -222,6 +232,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
         FAILURE_COUNTS.fun = 0; // Reset fun fail count
         clearCurrentFill(); // Clear fill, reset decay
         clearInterval(DECAY_INTERVALS.fun); // Stop fun need decay
+        pet.setStatusPlay(); // ***
         let playtime = value;
         FILL_INTERVAL = setInterval(() => { // Gradually fill fun need while playtime remains
             if (playtime > 0) {
@@ -230,6 +241,7 @@ export const FILL_FUNCTIONS = { // Functions that fill needs
             }
             else { // Clear play interval and resume fun decay
                 clearInterval(FILL_INTERVAL);
+                pet.setStatusNeutral(); // ***
                 DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
             }
         }, FILL_TIME.play);
@@ -246,5 +258,5 @@ export function clearCurrentFill() { // Clear current fill interval, restart all
 
 // PET 
 export const getName = () => pet.getName();
-export const getNeeds = () => pet.getAll();
+export const getNeeds = () => pet.getInfo();
 export const rename = (name) => pet.setName(name);

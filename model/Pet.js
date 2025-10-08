@@ -4,6 +4,14 @@
 const MIN_NEEDS = 0,
     MAX_NEEDS = 10,
     STARTER_NEEDS = {hunger: 7, energy: 8, bladder: 6, hygiene: 10, social: 5, fun: 5};
+// Pet Status Constants
+const NEUTRAL = null, 
+    EATING = "eating", 
+    SLEEPING = "sleeping", 
+    PEEING = "peeing", 
+    BATHING = "bathing",
+    SOCIALIZING = "socializing",
+    PLAYING = "playing";
 
 export default class Pet {
     // Private:
@@ -24,6 +32,7 @@ export default class Pet {
     constructor() {
         this.name = "Toby";
         this.alive = true;
+        this.status = NEUTRAL;
         this.hunger = STARTER_NEEDS.hunger;
         this.energy = STARTER_NEEDS.energy;
         this.bladder = STARTER_NEEDS.bladder;
@@ -34,15 +43,17 @@ export default class Pet {
     // Getters
     getName() { return this.name; }
     isAlive() { return this.alive; }
+    getStatus() { return this.status; }
     getHunger() { return this.hunger; }
     getEnergy() { return this.energy; }
     getBladder() { return this.bladder; }
     getHygiene() { return this.hygiene; }
     getSocial() { return this.social; }
     getFun() { return this.fun; }
-    getAll() {
+    getInfo() {
         const all = {
             alive: this.alive,
+            status: this.status,
             stinky: this.hygiene < 4,
             hunger: this.hunger,
             energy: this.energy,
@@ -71,6 +82,13 @@ export default class Pet {
     setHygiene(value) { if (this.#isValidValue(value)) this.hygiene = value; }
     setSocial(value) { if (this.#isValidValue(value)) this.social = value; }
     setFun(value) { if (this.#isValidValue(value)) this.fun = value; }
+    setStatusNeutral() { this.status = NEUTRAL; }
+    setStatusEat() { this.status = EATING; }
+    setStatusSleep() { this.status = SLEEPING; }
+    setStatusPee() { this.status = PEEING; }
+    setStatusBathe() { this.status = BATHING; }
+    setStatusSocial() { this.status = SOCIALIZING; }
+    setStatusPlay() { this.status = PLAYING; }
     // Other Methods
     alterHunger(value) {
         if (!value || typeof value !== 'number') {
@@ -134,5 +152,6 @@ export default class Pet {
     }
     loss() {
         this.alive = false;
+        this.status = NEUTRAL;
     }
 }
