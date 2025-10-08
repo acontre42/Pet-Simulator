@@ -30,12 +30,14 @@ const notificationBar = document.getElementById("notification-bar");
 const renameInput = document.getElementById("rename-input");
 const petImg = document.getElementById("pet-img");
 const stinkImg = document.getElementById("stink-img");
+const activeImg = document.getElementById("active-img");
 
 // Pet Info Variables
 let name;
 
 // Comparison Variables
 let priorEnergy = 0; // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
+let priorStatus; // For pet-img updating purposes
 
 // Button-related Variables
 const WAKE = -1, HUNGER = 0, ENERGY = 1, BLADDER = 2, HYGIENE = 3, SOCIAL = 4, FUN = 5; // CODES FOR SPECIFIC NEEDS
@@ -154,7 +156,7 @@ function updateNameDisplay() {
         elem.textContent = name;
     }
 }
-// Refreshes Need displays every 0.5 seconds
+// Refreshes Need displays
 async function updateNeeds() {
     try {
         const response = await fetch('/needs', {
@@ -176,7 +178,6 @@ async function updateNeeds() {
             return;
         }
         // Compare energy to prior value
-        console.log(`prior: ${priorEnergy}, current: ${energy}`); // *** DELETE
         if (energy == max && energy != priorEnergy) {
             wakeUp();
         }
@@ -184,6 +185,16 @@ async function updateNeeds() {
         // Check if stinky
         const {stinky} = data;
         stinkImg.hidden = (stinky === true ? false : true);
+        // Update pet-img based on current status
+        const {status} = data;
+        if (status !== priorStatus) {
+            console.log('new status: ', status); // *** DELETE
+            setPetImg(status);
+            if (status == null) { // Pet was previously doing an activity, and is now back to neutral
+                clearActiveEffect(); // *** TO DO: move?
+            }
+        }
+        priorStatus = status; // *** TO DO: move?
     }
     catch (err) {
         console.log(err);
@@ -202,6 +213,37 @@ async function endSimulation() {
     clearInterval(updateId);
     document.getElementById('pet-img').src = '/images/pets/Gravestone.png';
     notify(`${name} has passed away. RIP`);
+}
+// Set pet-img to match current activity
+function setPetImg(status) {
+    let url = '/images/pets/';
+    switch (status) {
+        case 'eating':
+            url += 'Eat.png';
+            break;
+        case 'sleeping':
+            url += 'Sleep.png';
+            break;
+        case 'peeing':
+            url += 'Bathroom.png';
+            break;
+        case 'socializing':
+        case 'playing':
+            url += 'Fun.png';
+            break;
+        default: url += 'Alien.png'; // Status: Neutral, Bathing
+    }
+    petImg.src = url;
+}
+// Set src of active-img and display it
+function setActiveEffect(url) {
+    activeImg.src = url;
+    activeImg.hidden = false;
+}
+// Clear src of active-img and hide it
+function clearActiveEffect() {
+    activeImg.src = "";
+    activeImg.hidden = true;
 }
 
 // NOTIFICATION-RELATED FUNCTIONS
@@ -262,20 +304,25 @@ async function rename() {
 
 // PET CARE-RELATED FUNCTIONS
 async function bathe() {
-    // *** TO DO: run animation?
     try {
         const response = await fetch('/needs/bathe', {
             method: 'GET'
         });
         const {result} = await response.json();
-        result ? notify("Scrub-a-dub-dub!") : notify(`${name} is already squeaky clean!`);
+        if (result) {
+            clearActiveEffect();
+            setActiveEffect('/images/effects/SoapBubbles.png');
+            notify("Scrub-a-dub-dub!");
+        }
+        else {
+            notify(`${name} is already squeaky clean!`)
+        }
     }
     catch (err) {
         console.log(err);
     }
 }
 async function eat() {
-    // ***TO DO*** run animation?
     let food_value = +foodSelect.value; // Unary + makes operand into a number
     try {
         const response = await fetch('/needs/eat', {
@@ -287,6 +334,7 @@ async function eat() {
         });
         const {result} = await response.json();
         if (result) {
+            clearActiveEffect();
             let selectedIndex = foodSelect.selectedIndex;
             notify(`${name} is eating ${foodSelect.options[selectedIndex].text}.`);
         }
@@ -296,20 +344,24 @@ async function eat() {
     }
 }
 async function goBathroom() {
-    // *** TO DO: run animation?
     try {
         const response = await fetch('/needs/pee', {
             method: 'GET'
         });
         const {result} = await response.json();
-        result ? notify("Pee time!") : notify(`${name}'s bladder is full.`);
+        if (result) {
+            clearActiveEffect();
+            notify("Pee time!");
+        }
+        else {
+            notify(`${name}'s bladder is full.`);
+        }
     }
     catch (err) {
         console.log(err);
     }
 }
 async function play() {
-    // ***TO DO*** run animation?
     let fun_value = +playSelect.value;
     try {
         const response = await fetch('/needs/play', {
@@ -321,6 +373,7 @@ async function play() {
         });
         const result = await response.json();
         if (result) {
+            clearActiveEffect();
             notify(`${name} is excited to play!`);
         }
     }
@@ -329,14 +382,13 @@ async function play() {
     }
 }
 async function sleep() {
-    // *** TO DO: run animation?
     try {
         const response = await fetch('/needs/sleep', {
             method: 'GET'
         });
         const {result} = await response.json();
         if (result) {
-            petImg.src = '/images/pets/Sleep.png';
+            clearActiveEffect();
             disableButtons();
             enableSpecificButton(WAKE);
             notify(`${name} has gone to sleep.`);
@@ -350,7 +402,6 @@ async function sleep() {
     }
 }
 async function socialize() {
-    // ***TO DO*** run animation?
     let social_value = +petSelect.value;
     try {
         const response = await fetch('/needs/socialize', {
@@ -362,6 +413,7 @@ async function socialize() {
         });
         const result = await response.json();
         if (result) {
+            clearActiveEffect();
             let selectedIndex = petSelect.selectedIndex;
             notify(`${name} loves the feeling of a good ${petSelect.options[selectedIndex].text}.`);
         }
@@ -371,14 +423,12 @@ async function socialize() {
     }
 }
 async function wakeUp() {
-    // *** TO DO: run animation?
     try {
         const response = await fetch('/needs/wake', {
             method: 'GET'
         });
         const {result} = await response.json();
         if (result) {
-            petImg.src = '/images/pets/Alien.png';
             notify(`${name} has woken up.`);
             disableSpecificButton(WAKE);
             enableButtons(WAKE);
@@ -402,7 +452,7 @@ await fetch('/pet/start', { // Start needs decay
     method: 'GET'
 });
 
-const updateId = setInterval(() => updateNeeds(), 500);
+const updateId = setInterval(() => updateNeeds(), 250); // Every 0.25 seconds
 
 window.addEventListener('beforeunload', () => { // Pause decay/fill intervals before leaving
     fetch('/pet/stop', {
