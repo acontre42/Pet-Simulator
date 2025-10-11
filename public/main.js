@@ -37,7 +37,7 @@ let name;
 
 // Comparison Variables
 let priorEnergy = 0; // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
-let priorHunger = 10; // To compare to updated value in order to warn user if pet's hunger reaches 0
+let priorHunger = 10; // To compare to updated value in order to warn user if pet's hunger gets low
 let priorStatus; // For pet-img updating purposes
 
 // Button-related Variables
@@ -342,6 +342,20 @@ async function eat() {
         if (result) {
             clearActiveEffect();
             let selectedIndex = foodSelect.selectedIndex;
+            let url = '/images/effects/food/'; // Set food effect
+            switch(selectedIndex) {
+                case 0:
+                    url += 'Spoonful.png';
+                    break;
+                case 1:
+                    url += 'Rubber.png';
+                    break;
+                case 2:
+                default:
+                    url += 'Confetti.png';
+                    break;
+            }
+            setActiveEffect(url);
             notify(`${name} is eating ${foodSelect.options[selectedIndex].text}.`);
         }
     }
