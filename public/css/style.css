@@ -110,3 +110,7 @@ button, select {
     border-style: dashed;
     padding: 0.5rem;
 }
+
+.active {
+    color: green;
+}
