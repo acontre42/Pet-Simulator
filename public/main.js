@@ -1,5 +1,6 @@
 "use strict";
 import NotificationBar from './NotificationBar.js';
+import * as PetDisplay from './PetDisplay.js';
 const NB = new NotificationBar();
 
 // HTML Elements
@@ -28,9 +29,7 @@ const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
 const notificationBar = document.getElementById("notification-bar");
 const renameInput = document.getElementById("rename-input");
-const petImg = document.getElementById("pet-img");
 const stinkImg = document.getElementById("stink-img");
-const activeImg = document.getElementById("active-img");
 
 // Pet Info Variables
 let name;
@@ -195,9 +194,8 @@ async function updateNeeds() {
         const {status} = data;
         if (status !== priorStatus) {
             console.log('new status: ', status); // *** DELETE
-            setPetImg(status);
             if (status == null) { // Pet was previously doing an activity, and is now back to neutral
-                clearActiveEffect();
+               PetDisplay.neutral();
             }
         }
         priorStatus = status;
@@ -219,37 +217,6 @@ async function endSimulation() {
     clearInterval(updateId);
     document.getElementById('pet-img').src = '/images/pets/Gravestone.png';
     notify(`${name} has passed away. RIP`);
-}
-// Set pet-img to match current activity
-function setPetImg(status) {
-    let url = '/images/pets/';
-    switch (status) {
-        case 'eating':
-            url += 'Eat.png';
-            break;
-        case 'sleeping':
-            url += 'Sleep.png';
-            break;
-        case 'peeing':
-            url += 'Bathroom.png';
-            break;
-        case 'socializing':
-        case 'playing':
-            url += 'Fun.png';
-            break;
-        default: url += 'Alien.png'; // Status: Neutral, Bathing
-    }
-    petImg.src = url;
-}
-// Set src of active-img and display it
-function setActiveEffect(url) {
-    activeImg.src = url;
-    activeImg.hidden = false;
-}
-// Clear src of active-img and hide it
-function clearActiveEffect() {
-    activeImg.src = "";
-    activeImg.hidden = true;
 }
 
 // NOTIFICATION-RELATED FUNCTIONS
@@ -316,8 +283,7 @@ async function bathe() {
         });
         const {result} = await response.json();
         if (result) {
-            clearActiveEffect();
-            setActiveEffect('/images/effects/SoapBubbles.png');
+            PetDisplay.bathing();
             notify("Scrub-a-dub-dub!");
         }
         else {
@@ -340,7 +306,6 @@ async function eat() {
         });
         const {result} = await response.json();
         if (result) {
-            clearActiveEffect();
             let selectedIndex = foodSelect.selectedIndex;
             let url = '/images/effects/food/'; // Set food effect
             switch(selectedIndex) {
@@ -355,7 +320,7 @@ async function eat() {
                     url += 'Confetti.png';
                     break;
             }
-            setActiveEffect(url);
+            PetDisplay.eating(url);
             notify(`${name} is eating ${foodSelect.options[selectedIndex].text}.`);
         }
     }
@@ -370,7 +335,7 @@ async function goBathroom() {
         });
         const {result} = await response.json();
         if (result) {
-            clearActiveEffect();
+            PetDisplay.clearActiveEffect(); // *** TO DO
             notify("Pee time!");
         }
         else {
@@ -393,7 +358,7 @@ async function play() {
         });
         const result = await response.json();
         if (result) {
-            clearActiveEffect();
+            PetDisplay.clearActiveEffect(); // *** TO DO
             notify(`${name} is excited to play!`);
         }
     }
@@ -408,7 +373,7 @@ async function sleep() {
         });
         const {result} = await response.json();
         if (result) {
-            clearActiveEffect();
+            PetDisplay.sleeping();
             disableButtons();
             enableSpecificButton(WAKE);
             notify(`${name} has gone to sleep.`);
@@ -433,7 +398,7 @@ async function socialize() {
         });
         const result = await response.json();
         if (result) {
-            clearActiveEffect();
+            PetDisplay.clearActiveEffect(); // *** TO DO
             let selectedIndex = petSelect.selectedIndex;
             notify(`${name} loves the feeling of a good ${petSelect.options[selectedIndex].text}.`);
         }
