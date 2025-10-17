@@ -80,20 +80,6 @@ export const sleeping = setDisplay.bind(null, 'sleeping', energyP, null);
 export const peeing = setDisplay.bind(null, 'peeing', bladderP, null);
 export const bathing = setDisplay.bind(null, 'bathing', hygieneP, '/images/effects/SoapBubbles.png');
 export const socializing = (index) => {
-    let url = '/images/effects/toys/';
-    switch (index) {
-        case 0:
-            url += 'Chew.png';
-            break;
-        case 1:
-            url += 'Rock.png';
-            break;
-        case 2:
-        default: url += 'Tug.png';
-    }
-    setDisplay('socializing', socialP, url);
-};
-export const playing = (index) => {
     let url = '/images/effects/hands/';
     switch (index) {
         case 0:
@@ -104,6 +90,20 @@ export const playing = (index) => {
             break;
         case 2:
         default: url += 'Belly.png';
+    }
+    setDisplay('socializing', socialP, url);
+};
+export const playing = (index) => {
+    let url = '/images/effects/toys/';
+    switch (index) {
+        case 0:
+            url += 'Chew.png';
+            break;
+        case 1:
+            url += 'Rock.png';
+            break;
+        case 2:
+        default: url += 'Tug.png';
     }
     setDisplay('playing', funP, url);
 };
@@ -120,5 +120,5 @@ export function deceased() {
 
 // Display stink effect depending on if pet is stinky
 export function setStink(stinky) {
-    stinkImg.hidden = !stinky; //(stinky === true ? false : true);
+    stinkImg.hidden = !stinky;
 }
