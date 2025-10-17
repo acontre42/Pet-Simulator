@@ -29,7 +29,6 @@ const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
 const notificationBar = document.getElementById("notification-bar");
 const renameInput = document.getElementById("rename-input");
-const stinkImg = document.getElementById("stink-img");
 
 // Pet Info Variables
 let name;
@@ -189,7 +188,7 @@ async function updateNeeds() {
         priorHunger = hunger;
         // Check if stinky
         const {stinky} = data;
-        stinkImg.hidden = (stinky === true ? false : true);
+        PetDisplay.setStink(stinky);
         // Update pet-img based on current status
         const {status} = data;
         if (status !== priorStatus) {
@@ -209,13 +208,9 @@ async function endSimulation() {
     fetch('/pet/stop', {
         method: 'GET'
     });
-    const effects = document.getElementsByClassName("effects");
-    for (let effect of effects) {
-        effect.hidden = true;
-    }
     disableButtons();
     clearInterval(updateId);
-    document.getElementById('pet-img').src = '/images/pets/Gravestone.png';
+    PetDisplay.deceased();
     notify(`${name} has passed away. RIP`);
 }
 
@@ -316,9 +311,7 @@ async function eat() {
                     url += 'Rubber.png';
                     break;
                 case 2:
-                default:
-                    url += 'Confetti.png';
-                    break;
+                default: url += 'Confetti.png';
             }
             PetDisplay.eating(url);
             notify(`${name} is eating ${foodSelect.options[selectedIndex].text}.`);
@@ -335,7 +328,7 @@ async function goBathroom() {
         });
         const {result} = await response.json();
         if (result) {
-            PetDisplay.clearActiveEffect(); // *** TO DO
+            PetDisplay.peeing();
             notify("Pee time!");
         }
         else {
@@ -358,7 +351,19 @@ async function play() {
         });
         const result = await response.json();
         if (result) {
-            PetDisplay.clearActiveEffect(); // *** TO DO
+            let selectedIndex = playSelect.selectedIndex;
+            let url = '/images/effects/toys/'; // Set toy effect
+            switch (selectedIndex) {
+                case 0:
+                    url += 'Chew.png';
+                    break;
+                case 1:
+                    url += 'Rock.png';
+                    break;
+                case 2:
+                default: url += 'Tug.png';
+            }
+            PetDisplay.playing(url);
             notify(`${name} is excited to play!`);
         }
     }
@@ -398,8 +403,19 @@ async function socialize() {
         });
         const result = await response.json();
         if (result) {
-            PetDisplay.clearActiveEffect(); // *** TO DO
             let selectedIndex = petSelect.selectedIndex;
+            let url = '/images/effects/hands/'; // Set hand effect
+            switch (selectedIndex) {
+                case 0:
+                    url += 'Head.png';
+                    break;
+                case 1:
+                    url += 'Chin.png';
+                    break;
+                case 2:
+                default: url += 'Belly.png';
+            }
+            PetDisplay.socializing(url);
             notify(`${name} loves the feeling of a good ${petSelect.options[selectedIndex].text}.`);
         }
     }
