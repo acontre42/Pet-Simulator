@@ -3,6 +3,7 @@
 // <img>
 const activeImg = document.getElementById("active-img");
 const petImg = document.getElementById("pet-img");
+const stinkImg = document.getElementById("stink-img");
 // <p>
 const hungerP = document.getElementById("hunger");
 const energyP = document.getElementById("energy");
@@ -38,7 +39,7 @@ function setPetImg(status) {
             url += 'Sleep.png';
             break;
         case 'peeing':
-            url += 'Bathroom.png';
+            url += 'Outhouse.png';
             break;
         case 'socializing':
         case 'playing':
@@ -63,17 +64,22 @@ function setDisplay(status, needP, url) {
 export const neutral = setDisplay.bind(null, null, null, null);
 export const eating = (url) => setDisplay('eating', hungerP, url);
 export const sleeping = setDisplay.bind(null, 'sleeping', energyP, null);
-
-export function peeing() {
-    // *** TO DO
-}
-
+export const peeing = setDisplay.bind(null, 'peeing', bladderP, null);
 export const bathing = setDisplay.bind(null, 'bathing', hygieneP, '/images/effects/SoapBubbles.png');
-
-export function socializing() {
-    // *** TO DO
+export const socializing = (url) => setDisplay('socializing', socialP, url);
+export const playing = (url) => setDisplay('playing', funP, url);
+export function deceased() {
+    const effects = document.getElementsByClassName("effects");
+    for (let effect of effects) { // Hide all effects
+        effect.hidden = true;
+    }
+    for (let p of needsPArray) { // Return text to normal color
+        p.classList.remove("active");
+    }
+    petImg.src = '/images/pets/Gravestone.png';
 }
 
-export function playing() {
-    // *** TO DO
+// Display stink effect depending on if pet is stinky
+export function setStink(stinky) {
+    stinkImg.hidden = !stinky; //(stinky === true ? false : true);
 }
