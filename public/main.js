@@ -302,18 +302,7 @@ async function eat() {
         const {result} = await response.json();
         if (result) {
             let selectedIndex = foodSelect.selectedIndex;
-            let url = '/images/effects/food/'; // Set food effect
-            switch(selectedIndex) {
-                case 0:
-                    url += 'Spoonful.png';
-                    break;
-                case 1:
-                    url += 'Rubber.png';
-                    break;
-                case 2:
-                default: url += 'Confetti.png';
-            }
-            PetDisplay.eating(url);
+            PetDisplay.eating(selectedIndex);
             notify(`${name} is eating ${foodSelect.options[selectedIndex].text}.`);
         }
     }
@@ -352,18 +341,7 @@ async function play() {
         const result = await response.json();
         if (result) {
             let selectedIndex = playSelect.selectedIndex;
-            let url = '/images/effects/toys/'; // Set toy effect
-            switch (selectedIndex) {
-                case 0:
-                    url += 'Chew.png';
-                    break;
-                case 1:
-                    url += 'Rock.png';
-                    break;
-                case 2:
-                default: url += 'Tug.png';
-            }
-            PetDisplay.playing(url);
+            PetDisplay.playing(selectedIndex);
             notify(`${name} is excited to play!`);
         }
     }
@@ -404,18 +382,7 @@ async function socialize() {
         const result = await response.json();
         if (result) {
             let selectedIndex = petSelect.selectedIndex;
-            let url = '/images/effects/hands/'; // Set hand effect
-            switch (selectedIndex) {
-                case 0:
-                    url += 'Head.png';
-                    break;
-                case 1:
-                    url += 'Chin.png';
-                    break;
-                case 2:
-                default: url += 'Belly.png';
-            }
-            PetDisplay.socializing(url);
+            PetDisplay.socializing(selectedIndex);
             notify(`${name} loves the feeling of a good ${petSelect.options[selectedIndex].text}.`);
         }
     }

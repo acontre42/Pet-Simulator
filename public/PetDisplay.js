@@ -62,12 +62,51 @@ function setDisplay(status, needP, url) {
     }
 }
 export const neutral = setDisplay.bind(null, null, null, null);
-export const eating = (url) => setDisplay('eating', hungerP, url);
+export const eating = (index) => {
+    let url = '/images/effects/food/';
+    switch (index) {
+        case 0:
+            url += 'Spoonful.png';
+            break;
+        case 1:
+            url += 'Rubber.png';
+            break;
+        case 2:
+        default: url += 'Confetti.png';
+    }
+    setDisplay('eating', hungerP, url);
+};
 export const sleeping = setDisplay.bind(null, 'sleeping', energyP, null);
 export const peeing = setDisplay.bind(null, 'peeing', bladderP, null);
 export const bathing = setDisplay.bind(null, 'bathing', hygieneP, '/images/effects/SoapBubbles.png');
-export const socializing = (url) => setDisplay('socializing', socialP, url);
-export const playing = (url) => setDisplay('playing', funP, url);
+export const socializing = (index) => {
+    let url = '/images/effects/toys/';
+    switch (index) {
+        case 0:
+            url += 'Chew.png';
+            break;
+        case 1:
+            url += 'Rock.png';
+            break;
+        case 2:
+        default: url += 'Tug.png';
+    }
+    setDisplay('socializing', socialP, url);
+};
+export const playing = (index) => {
+    let url = '/images/effects/hands/';
+    switch (index) {
+        case 0:
+            url += 'Head.png';
+            break;
+        case 1:
+            url += 'Chin.png';
+            break;
+        case 2:
+        default: url += 'Belly.png';
+    }
+    setDisplay('playing', funP, url);
+};
 export function deceased() {
     const effects = document.getElementsByClassName("effects");
     for (let effect of effects) { // Hide all effects
