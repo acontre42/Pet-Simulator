@@ -42,6 +42,8 @@ function setPetImg(status) {
             url += 'Outhouse.png';
             break;
         case 'socializing':
+            url += 'Happy.png';
+            break;
         case 'playing':
             url += 'Fun.png';
             break;
