@@ -1,5 +1,7 @@
 //  Displays different pet and effect images depending on pet activity
 
+// HTML Class Names
+const ACTIVE = "active", UP_DOWN = "animateUpDown", LEFT_RIGHT = "animateLeftRight", CLOCKWISE = "animateClockwise";
 // <img>
 const activeImg = document.getElementById("active-img");
 const petImg = document.getElementById("pet-img");
@@ -19,13 +21,16 @@ function setActiveEffect(url) {
     activeImg.hidden = false;
 }
 
-// Clear src of active-img and hide it. Return need <p> text to default color.
+// Clear src of active-img and hide it. Return need <p> text to default color. Remove any animation-related classes.
 export function clearActiveEffect() {
     activeImg.src = "";
     activeImg.hidden = true;
     for (let p of needsPArray) {
-        p.classList.remove("active");
+        p.classList.remove(ACTIVE);
     }
+    activeImg.classList.remove(UP_DOWN);
+    activeImg.classList.remove(LEFT_RIGHT);
+    activeImg.classList.remove(CLOCKWISE);
 }
 
 // Set pet-img src based on status to match current activity.
@@ -57,7 +62,7 @@ function setDisplay(status, needP, url) {
     clearActiveEffect();
     setPetImg(status);
     if (needP) {
-        needP.classList.add("active");
+        needP.classList.add(ACTIVE);
     }
     if (url) {
         setActiveEffect(url);
@@ -83,17 +88,23 @@ export const peeing = setDisplay.bind(null, 'peeing', bladderP, null);
 export const bathing = setDisplay.bind(null, 'bathing', hygieneP, '/images/effects/SoapBubbles.png');
 export const socializing = (index) => {
     let url = '/images/effects/hands/';
+    let animationClass;
     switch (index) {
         case 0:
             url += 'Head.png';
+            animationClass = UP_DOWN;
             break;
         case 1:
             url += 'Chin.png';
+            animationClass = LEFT_RIGHT;
             break;
         case 2:
-        default: url += 'Belly.png';
+        default: 
+            url += 'Belly.png';
+            animationClass = CLOCKWISE;
     }
     setDisplay('socializing', socialP, url);
+    activeImg.classList.add(animationClass);
 };
 export const playing = (index) => {
     let url = '/images/effects/toys/';
@@ -115,7 +126,7 @@ export function deceased() {
         effect.hidden = true;
     }
     for (let p of needsPArray) { // Return text to normal color
-        p.classList.remove("active");
+        p.classList.remove(ACTIVE);
     }
     petImg.src = '/images/pets/Gravestone.png';
 }
