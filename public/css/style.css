@@ -137,38 +137,9 @@ button, select {
     animation-iteration-count: 5;
 }
 
-@keyframes up-down {
-    from {
-        transform: translate(25%, -10%);
-    }
-    to {
-        transform: translate(25%, 0%);
-    }
-}
-
-@keyframes left-right {
-    from {
-        transform: translate(20%, -5%);
-    }
-    to {
-        transform: translate(35%, -5%);
-    }
-}
-
-@keyframes clockwise {
-    0% {
-        transform: translate(25%, -5%);
-    }
-    25% {
-        transform: translate(28%, -2%);
-    }
-    50% {
-        transform: translate(25%, 1%);
-    }
-    75% {
-        transform: translate(22%, -2%);
-    }
-    100% {
-        transform: translate(25%, -5%);
-    }
+.animateFetch {
+    animation-name: fetch;
+    animation-duration: 1.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: 4;
 }
