@@ -2,7 +2,7 @@ import Pet from '../model/Pet.js';
 const pet = new Pet();
 
 // NEED FAILURES
-const MAX_FAILURE_HUNGER = 10, MAX_FAILURE_ENERGY = 5, MAX_FAILURE_SOCIAL = 25, MAX_FAILURE_FUN = 5; // ***TO DO*** TWEAK
+const MAX_FAILURE_HUNGER = 10, MAX_FAILURE_ENERGY = 2, MAX_FAILURE_SOCIAL = 10, MAX_FAILURE_FUN = 5; // ***TO DO*** TWEAK
 const FAILURE_COUNTS = {
     hunger: 0,
     energy: 0,
@@ -49,8 +49,8 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         if (pet.energyEmpty()) {
             FAILURE_COUNTS.energy++;
             if (FAILURE_COUNTS.energy == MAX_FAILURE_ENERGY) {
-                // *** TO DO: trigger energy failure
                 console.log('ENERGY FAILURE'); // *** DELETE
+                FILL_FUNCTIONS.sleep();
             }
         }
         console.log('energy fail count after decay: ', FAILURE_COUNTS.energy); // *** DELETE

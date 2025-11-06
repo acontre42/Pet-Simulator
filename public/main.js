@@ -176,7 +176,10 @@ async function updateNeeds() {
             await endSimulation();
             return;
         }
-        // Compare energy to prior value
+        // Compare energy to prior value, wake up if energy is full, notify if tired
+        if (energy < 3 && priorEnergy >= 3) {
+            notify(`${name} is getting very sleepy...`);
+        }
         if (energy == max && energy != priorEnergy) {
             wakeUp();
         }
@@ -189,12 +192,22 @@ async function updateNeeds() {
         // Check if stinky
         const {stinky} = data;
         PetDisplay.setStink(stinky);
-        // Update pet-img based on current status
+        // Update UI based on changes to current status
         const {status} = data;
         if (status !== priorStatus) {
             console.log('new status: ', status); // *** DELETE
             if (status == null) { // Pet was previously doing an activity, and is now back to neutral
                PetDisplay.neutral();
+            }
+            if (status == 'sleeping') { // Pet was not previously sleeping, but now is. Code moved here to account for energy failures.
+                PetDisplay.sleeping();
+                disableButtons();
+                enableSpecificButton(WAKE);
+                notify(`${name} has gone to sleep.`);
+            }
+            else if (priorStatus == 'sleeping') { // Pet was previously sleeping, but is now awake.
+                disableSpecificButton(WAKE);
+                enableButtons(WAKE);
             }
         }
         priorStatus = status;
@@ -355,13 +368,7 @@ async function sleep() {
             method: 'GET'
         });
         const {result} = await response.json();
-        if (result) {
-            PetDisplay.sleeping();
-            disableButtons();
-            enableSpecificButton(WAKE);
-            notify(`${name} has gone to sleep.`);
-        }
-        else {
+        if (!result) {
             notify(`${name} is not tired.`);
         }
     }
@@ -398,8 +405,6 @@ async function wakeUp() {
         const {result} = await response.json();
         if (result) {
             notify(`${name} has woken up.`);
-            disableSpecificButton(WAKE);
-            enableButtons(WAKE);
         }
     }
     catch (err) {
