@@ -11,7 +11,9 @@ const NEUTRAL = null,
     PEEING = "peeing", 
     BATHING = "bathing",
     SOCIALIZING = "socializing",
-    PLAYING = "playing";
+    PLAYING = "playing",
+    RUNAWAY = "runaway",
+    RESTLESS = "restless";
 
 export default class Pet {
     // Private:
@@ -89,6 +91,8 @@ export default class Pet {
     setStatusBathe() { this.status = BATHING; }
     setStatusSocial() { this.status = SOCIALIZING; }
     setStatusPlay() { this.status = PLAYING; }
+    setStatusRunaway() { this.status = RUNAWAY; }
+    setStatusRestless() { this.status = RESTLESS; }
     // Other Methods
     alterHunger(value) {
         if (!value || typeof value !== 'number') {
