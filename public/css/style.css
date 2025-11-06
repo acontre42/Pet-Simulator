@@ -137,9 +137,24 @@ button, select {
     animation-iteration-count: 5;
 }
 
+.animateSqueeze {
+    animation-name: squeeze;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: 5;
+}
+
 .animateFetch {
     animation-name: fetch;
     animation-duration: 1.5s;
     animation-timing-function: linear;
-    animation-iteration-count: 4;
+    animation-iteration-count: 5;
+}
+
+.animateBackForth {
+    animation: left-right;
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.81, 0.2, 0.3, 0.25);
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
 }

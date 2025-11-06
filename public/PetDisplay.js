@@ -1,7 +1,10 @@
-//  Displays different pet and effect images depending on pet activity
+//  Displays different pet/effect images and adds/removes animation classes depending on pet activity
 
 // HTML Class Names
-const ACTIVE = "active", UP_DOWN = "animateUpDown", LEFT_RIGHT = "animateLeftRight", CLOCKWISE = "animateClockwise";
+const ACTIVE = "active";
+const UP_DOWN = "animateUpDown", LEFT_RIGHT = "animateLeftRight", CLOCKWISE = "animateClockwise", 
+        SQUEEZE = "animateSqueeze", FETCH = "animateFetch", BACK_FORTH = "animateBackForth";
+const ANIMATION_CLASSES = [UP_DOWN, LEFT_RIGHT, CLOCKWISE, SQUEEZE, FETCH, BACK_FORTH];
 // <img>
 const activeImg = document.getElementById("active-img");
 const petImg = document.getElementById("pet-img");
@@ -28,9 +31,9 @@ export function clearActiveEffect() {
     for (let p of needsPArray) {
         p.classList.remove(ACTIVE);
     }
-    activeImg.classList.remove(UP_DOWN);
-    activeImg.classList.remove(LEFT_RIGHT);
-    activeImg.classList.remove(CLOCKWISE);
+    for (let AC of ANIMATION_CLASSES) {
+        activeImg.classList.remove(AC);
+    }
 }
 
 // Set pet-img src based on status to match current activity.
@@ -108,17 +111,23 @@ export const socializing = (index) => {
 };
 export const playing = (index) => {
     let url = '/images/effects/toys/';
+    let animationClass;
     switch (index) {
         case 0:
             url += 'Chew.png';
+            animationClass = SQUEEZE;
             break;
         case 1:
             url += 'Rock.png';
+            animationClass = FETCH;
             break;
         case 2:
-        default: url += 'Tug.png';
+        default: 
+            url += 'Tug.png';
+            animationClass = BACK_FORTH;
     }
     setDisplay('playing', funP, url);
+    activeImg.classList.add(animationClass);
 };
 export function deceased() {
     const effects = document.getElementsByClassName("effects");
