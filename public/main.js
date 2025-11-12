@@ -34,8 +34,13 @@ const renameInput = document.getElementById("rename-input");
 let name;
 
 // Comparison Variables
-let priorEnergy = 0; // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
-let priorHunger = 10; // To compare to updated value in order to warn user if pet's hunger gets low
+const priorNeeds = {
+    energy: 0,  // To compare to updated values in order to avoid calling wakeUp everytime energy is maxed out
+    hunger: 10,
+    bladder: 10,
+    social: 10,
+    fun: 10
+};
 let priorStatus; // For pet-img updating purposes
 
 // Button-related Variables
@@ -176,19 +181,12 @@ async function updateNeeds() {
             await endSimulation();
             return;
         }
-        // Compare energy to prior value, wake up if energy is full, notify if tired
-        if (energy < 3 && priorEnergy >= 3) {
-            notify(`${name} is getting very sleepy...`);
-        }
-        if (energy == max && energy != priorEnergy) {
+        // Compare energy to prior value and wake up if energy is full
+        if (energy == max && energy != priorNeeds.energy) {
             wakeUp();
         }
-        priorEnergy = energy;
-        // Notify if hungry
-        if (hunger < 4 && priorHunger >= 4) {
-            notify(`${name} is getting hungry!`);
-        }
-        priorHunger = hunger;
+        // Alert user prior to need failures
+        notifyLowNeeds(data);
         // Check if stinky
         const {stinky} = data;
         PetDisplay.setStink(stinky);
@@ -242,6 +240,29 @@ function notify(msg) {
         notificationBar.innerHTML += `<p class='notification'>${n.toString()}</p>`;
     }
     notificationBar.scrollTop = notificationBar.scrollHeight;
+}
+// Notify user of low pet needs
+function notifyLowNeeds(needs) {
+    if (needs.hunger < 4 && priorNeeds.hunger >= 4) { // Hungry
+        notify(`${name} is getting hungry!`);
+    }
+    priorNeeds.hunger = needs.hunger;
+    if (needs.energy < 3 && priorNeeds.energy >= 3) { // Tired
+        notify(`${name} is getting very sleepy...`);
+    }
+    priorNeeds.energy = needs.energy;
+    if (needs.bladder < 2 && priorNeeds.bladder >= 2) { // Bladder full
+        notify(`${name} is about to have an accident!`);
+    }
+    priorNeeds.bladder = needs.bladder;
+    if (needs.social < 3 && priorNeeds.social >= 3) { // Lonely
+        notify(`${name} could use some affection.`);
+    }
+    priorNeeds.social = needs.social;
+    if (needs.fun < 3 && priorNeeds.fun >= 3) { // Bored
+        notify(`${name} is bored and starting to feel restless...`);
+    }
+    priorNeeds.fun = needs.fun;
 }
 
 // NAME-RELATED FUNCTIONS
@@ -320,7 +341,7 @@ async function eat() {
         }
     }
     catch (err) {
-        console.log('Error while attempting to feed pet')
+        console.log(err);
     }
 }
 async function goBathroom() {
@@ -331,7 +352,6 @@ async function goBathroom() {
         const {result} = await response.json();
         if (result) {
             PetDisplay.peeing();
-            notify("Pee time!");
         }
         else {
             notify(`${name}'s bladder is full.`);
@@ -355,11 +375,10 @@ async function play() {
         if (result) {
             let selectedIndex = playSelect.selectedIndex;
             PetDisplay.playing(selectedIndex);
-            notify(`${name} is excited to play!`);
         }
     }
     catch (err) {
-        console.log('Error while attempting to socialize with pet')
+        console.log(err);
     }
 }
 async function sleep() {
@@ -390,11 +409,10 @@ async function socialize() {
         if (result) {
             let selectedIndex = petSelect.selectedIndex;
             PetDisplay.socializing(selectedIndex);
-            notify(`${name} loves the feeling of a good ${petSelect.options[selectedIndex].text}.`);
         }
     }
     catch (err) {
-        console.log('Error while attempting to socialize with pet')
+        console.log(err);
     }
 }
 async function wakeUp() {
