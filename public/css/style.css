@@ -96,7 +96,7 @@ button, select {
     float: right;
 }
 
-#notification-bar {
+#notification-box {
     border: 1px solid white;
     width: 100%;
     height: 85%;

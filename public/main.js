@@ -1,7 +1,7 @@
 "use strict";
-import NotificationBar from './NotificationBar.js';
+import NotificationBox from './NotificationBox.js';
 import * as PetDisplay from './PetDisplay.js';
-const NB = new NotificationBar();
+const NB = new NotificationBox();
 
 // HTML Elements
 // Buttons
@@ -27,7 +27,7 @@ const funP = document.getElementById("fun");
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
-const notificationBar = document.getElementById("notification-bar");
+const notificationBox = document.getElementById("notification-box");
 const renameInput = document.getElementById("rename-input");
 
 // Pet Info Variables
@@ -226,20 +226,20 @@ async function endSimulation() {
 }
 
 // NOTIFICATION-RELATED FUNCTIONS
-// Clear notification-bar
+// Clear notification-box
 function clearNB() {
     NB.clear();
-    notificationBar.innerHTML = `<p>No notifications to display.</p>`;
+    notificationBox.innerHTML = `<p>No notifications to display.</p>`;
 }
-// Adds notification to notification bar. Scrolls to bottom of notification bar
+// Adds notification to notification box. Scrolls to bottom of notification box
 function notify(msg) {
     NB.addNotification(msg);
     const notifications = NB.getNotifications();
-    notificationBar.innerHTML = ``;
+    notificationBox.innerHTML = ``;
     for (let n of notifications) {
-        notificationBar.innerHTML += `<p class='notification'>${n.toString()}</p>`;
+        notificationBox.innerHTML += `<p class='notification'>${n.toString()}</p>`;
     }
-    notificationBar.scrollTop = notificationBar.scrollHeight;
+    notificationBox.scrollTop = notificationBox.scrollHeight;
 }
 // Notify user of low pet needs
 function notifyLowNeeds(needs) {

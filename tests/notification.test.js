@@ -1,6 +1,6 @@
 "use strict";
 import {Notification, createNotification} from '../public/Notification.js';
-import NotificationBar from '../public/NotificationBar.js';
+import NotificationBox from '../public/NotificationBox.js';
 
 describe('Test createNotification', () => {
     test('Testing valid Notification creation', () => {
@@ -20,8 +20,8 @@ describe('Test createNotification', () => {
     });
 });
 
-describe('Test NotificationBar', () => {
-    const NB = new NotificationBar();
+describe('Test NotificationBox', () => {
+    const NB = new NotificationBox();
 
     test('Ensure only valid notifications are accepted', () => {
         NB.addNotification();

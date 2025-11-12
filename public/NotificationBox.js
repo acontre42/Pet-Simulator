@@ -2,7 +2,7 @@
 
 import {createNotification} from './Notification.js';
 
-export default class NotificationBar {
+export default class NotificationBox {
     constructor() {
         this.notifications = [];
     }
