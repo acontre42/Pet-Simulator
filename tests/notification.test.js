@@ -2,6 +2,11 @@
 import {Notification, createNotification} from '../public/Notification.js';
 import NotificationBox from '../public/NotificationBox.js';
 
+let tooBig = '';
+for (let i = 1; i <= Notification.getMaxLength() + 1; i++) {
+    tooBig += 'a';
+}
+
 describe('Test createNotification', () => {
     test('Testing valid Notification creation', () => {
         const goodNotif = createNotification('I am a good notification :)');
@@ -13,7 +18,7 @@ describe('Test createNotification', () => {
         expect(badNotif).toEqual(null);
         badNotif = createNotification('');
         expect(badNotif).toEqual(null);
-        badNotif = createNotification('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+        badNotif = createNotification(tooBig);
         expect(badNotif).toEqual(null);
         badNotif = createNotification(400);
         expect(badNotif).toEqual(null);
@@ -27,10 +32,14 @@ describe('Test NotificationBox', () => {
         NB.addNotification();
         NB.addNotification('');
         NB.addNotification(400);
-        NB.addNotification('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        NB.addNotification(tooBig)
         expect(NB.getLength()).toEqual(0);
         NB.addNotification('hi');
-        NB.addNotification('I am less than 50 characters long. I am only 49!!')
+        let maxLengthMsg = '';
+        for (let i = 1; i <= Notification.getMaxLength(); i++) {
+            maxLengthMsg += 'a';
+        }
+        NB.addNotification(maxLengthMsg);
         expect(NB.getLength()).toEqual(2);
     });
     

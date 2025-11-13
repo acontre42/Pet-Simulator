@@ -1,6 +1,6 @@
 "use strict";
 
-const MAX_LENGTH = 50;
+const MAX_LENGTH = 150;
 
 export class Notification {
     constructor(message) {
@@ -8,6 +8,7 @@ export class Notification {
         this.date = new Date();
     }
     // Getters
+    static getMaxLength() { return MAX_LENGTH; }
     getMessage() { return this.message; }
     getDate() { return this.date; }
     // Other Methods
