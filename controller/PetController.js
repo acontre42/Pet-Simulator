@@ -1,5 +1,6 @@
 import Pet from '../model/Pet.js';
 const pet = new Pet();
+const notifications = []; // To notify user of need failures
 
 // NEED FAILURES
 const MAX_FAILURE_HUNGER = 10, MAX_FAILURE_ENERGY = 2, MAX_FAILURE_SOCIAL = 10, MAX_FAILURE_FUN = 5; // ***TO DO*** TWEAK
@@ -22,7 +23,7 @@ const DECAY_TIME = { // How fast needs decay
     energy: 36000,
     bladder: 14500,
     hygiene: 45000,
-    social: 13000,
+    social: 15000,
     fun: 11500
 };
 const DECAY_INTERVALS = { // Will hold intervals for decaying needs
@@ -51,15 +52,16 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
             if (FAILURE_COUNTS.energy == MAX_FAILURE_ENERGY) {
                 console.log('ENERGY FAILURE'); // *** DELETE
                 FILL_FUNCTIONS.sleep();
+                notifications.push(`${pet.getName()} has fallen asleep from exhaustion.`);
             }
         }
-        console.log('energy fail count after decay: ', FAILURE_COUNTS.energy); // *** DELETE
     },
     bladder: function() {
         pet.alterBladder(-1);
         if (pet.bladderEmpty()) {
             console.log('BLADDER FAILURE'); // *** DELETE
             pet.bladderFailure();
+            notifications.push(`Uh oh! ${pet.getName()} has had an accident.`);
         }
     },
     hygiene: function() {
@@ -72,9 +74,9 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
             if (FAILURE_COUNTS.social == MAX_FAILURE_SOCIAL) {
                 // *** TO DO: trigger social failure
                 console.log('SOCIAL FAILURE'); // *** DELETE
+                notifications.push(`${pet.getName()} has gone elsewhere for attention and will be back later.`);
             }
         }
-        console.log('social fail count after decay: ', FAILURE_COUNTS.social); // *** DELETE
     },
     fun: function() {
         pet.alterFun(-1);
@@ -83,9 +85,9 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
             if (FAILURE_COUNTS.fun == MAX_FAILURE_FUN) {
                 // *** TO DO: fun failure
                 console.log('FUN FAILURE'); // *** DELETE
+                notifications.push(`${pet.getName()} has gotten the zoomies! He should calm down soon...`);
             }
         }
-        console.log('fun fail count after decay: ', FAILURE_COUNTS.fun); // *** DELETE
     },
     wakeUp: function() {
         if (!pet.isAlive()) {
@@ -260,3 +262,8 @@ export function clearCurrentFill() { // Clear current fill interval, restart all
 export const getName = () => pet.getName();
 export const getNeeds = () => pet.getInfo();
 export const rename = (name) => pet.setName(name);
+
+// NOTIFICATIONS
+export function getNotifications() { // Return/remove messages from notifications array
+    return notifications.splice(0);
+}

@@ -1,7 +1,6 @@
 "use strict";
-import NotificationBox from './NotificationBox.js';
+import * as NotificationManager from './NotificationManager.js';
 import * as PetDisplay from './PetDisplay.js';
-const NB = new NotificationBox();
 
 // HTML Elements
 // Buttons
@@ -27,7 +26,6 @@ const funP = document.getElementById("fun");
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
-const notificationBox = document.getElementById("notification-box");
 const renameInput = document.getElementById("rename-input");
 
 // Pet Info Variables
@@ -201,7 +199,6 @@ async function updateNeeds() {
                 PetDisplay.sleeping();
                 disableButtons();
                 enableSpecificButton(WAKE);
-                notify(`${name} has gone to sleep.`);
             }
             else if (priorStatus == 'sleeping') { // Pet was previously sleeping, but is now awake.
                 disableSpecificButton(WAKE);
@@ -221,46 +218,32 @@ async function endSimulation() {
     });
     disableButtons();
     clearInterval(updateId);
+    NotificationManager.stopInterval();
     PetDisplay.deceased();
-    notify(`${name} has passed away. RIP`);
+    NotificationManager.notify(`${name} has passed away. RIP`);
 }
 
 // NOTIFICATION-RELATED FUNCTIONS
-// Clear notification-box
-function clearNB() {
-    NB.clear();
-    notificationBox.innerHTML = `<p>No notifications to display.</p>`;
-}
-// Adds notification to notification box. Scrolls to bottom of notification box
-function notify(msg) {
-    NB.addNotification(msg);
-    const notifications = NB.getNotifications();
-    notificationBox.innerHTML = ``;
-    for (let n of notifications) {
-        notificationBox.innerHTML += `<p class='notification'>${n.toString()}</p>`;
-    }
-    notificationBox.scrollTop = notificationBox.scrollHeight;
-}
 // Notify user of low pet needs
 function notifyLowNeeds(needs) {
     if (needs.hunger < 4 && priorNeeds.hunger >= 4) { // Hungry
-        notify(`${name} is getting hungry!`);
+        NotificationManager.notify(`${name} is getting hungry!`);
     }
     priorNeeds.hunger = needs.hunger;
     if (needs.energy < 3 && priorNeeds.energy >= 3) { // Tired
-        notify(`${name} is getting very sleepy...`);
+        NotificationManager.notify(`${name} is getting very sleepy...`);
     }
     priorNeeds.energy = needs.energy;
     if (needs.bladder < 2 && priorNeeds.bladder >= 2) { // Bladder full
-        notify(`${name} is about to have an accident!`);
+        NotificationManager.notify(`${name} is about to have an accident!`);
     }
     priorNeeds.bladder = needs.bladder;
     if (needs.social < 3 && priorNeeds.social >= 3) { // Lonely
-        notify(`${name} could use some affection.`);
+        NotificationManager.notify(`${name} could use some affection.`);
     }
     priorNeeds.social = needs.social;
     if (needs.fun < 3 && priorNeeds.fun >= 3) { // Bored
-        notify(`${name} is bored and starting to feel restless...`);
+        NotificationManager.notify(`${name} is bored and starting to feel restless...`);
     }
     priorNeeds.fun = needs.fun;
 }
@@ -313,10 +296,10 @@ async function bathe() {
         const {result} = await response.json();
         if (result) {
             PetDisplay.bathing();
-            notify("Scrub-a-dub-dub!");
+            NotificationManager.notify("Scrub-a-dub-dub!");
         }
         else {
-            notify(`${name} is already squeaky clean!`)
+            NotificationManager.notify(`${name} is already squeaky clean!`)
         }
     }
     catch (err) {
@@ -337,7 +320,7 @@ async function eat() {
         if (result) {
             let selectedIndex = foodSelect.selectedIndex;
             PetDisplay.eating(selectedIndex);
-            notify(`${name} is eating ${foodSelect.options[selectedIndex].text}.`);
+            NotificationManager.notify(`${name} is eating ${foodSelect.options[selectedIndex].text}.`);
         }
     }
     catch (err) {
@@ -354,7 +337,7 @@ async function goBathroom() {
             PetDisplay.peeing();
         }
         else {
-            notify(`${name}'s bladder is full.`);
+            NotificationManager.notify(`${name}'s bladder is full.`);
         }
     }
     catch (err) {
@@ -387,9 +370,7 @@ async function sleep() {
             method: 'GET'
         });
         const {result} = await response.json();
-        if (!result) {
-            notify(`${name} is not tired.`);
-        }
+        NotificationManager.notify(result ? `${name} has gone to sleep.` : `${name} is not tired.`);
     }
     catch (err) {
         console.log(err);
@@ -422,7 +403,7 @@ async function wakeUp() {
         });
         const {result} = await response.json();
         if (result) {
-            notify(`${name} has woken up.`);
+            NotificationManager.notify(`${name} has woken up.`);
         }
     }
     catch (err) {
@@ -434,7 +415,7 @@ async function wakeUp() {
 // MAIN
 await getPetName();
 enableButtons(WAKE);
-clearButton.addEventListener('click', clearNB);
+clearButton.addEventListener('click', NotificationManager.clearNB);
 renameButton.addEventListener('click', showRenameElems);
 cancelButton.addEventListener('click', hideRenameElems);
 saveButton.addEventListener('click', rename);
@@ -444,6 +425,7 @@ await fetch('/pet/start', { // Start needs decay
 });
 
 const updateId = setInterval(() => updateNeeds(), 250); // Every 0.25 seconds
+NotificationManager.startInterval(); // Start checking for notifications in PetController
 
 window.addEventListener('beforeunload', () => { // Pause decay/fill intervals before leaving
     fetch('/pet/stop', {

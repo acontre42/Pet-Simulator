@@ -85,6 +85,11 @@ app.patch('/needs/play', (req, res) => {
     res.status(statusCode).send({result: result});
 });
 
+app.get('/notifications', (req, res) => {
+    const notifications = PetController.getNotifications();
+    res.status(200).send(notifications);
+});
+
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`)
 });
