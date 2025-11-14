@@ -45,6 +45,7 @@ export default class Pet {
     // Getters
     getName() { return this.name; }
     isAlive() { return this.alive; }
+    isUnavailable() { return (this.status == RESTLESS || this.status == RUNAWAY) ? true : false; }
     getStatus() { return this.status; }
     getHunger() { return this.hunger; }
     getEnergy() { return this.energy; }
@@ -68,6 +69,8 @@ export default class Pet {
         };
         return all;
     }
+    static getMaxNeeds() { return MAX_NEEDS; }
+    static getMinNeeds() { return MIN_NEEDS; }
     // Setters
     setName(name) {
         if (typeof name !== 'string' || name.length > 10 || !/[a-z]+/i.test(name)) {
