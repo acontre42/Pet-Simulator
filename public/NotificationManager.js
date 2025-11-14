@@ -7,16 +7,21 @@ let updateId; // Will hold interval that calls getNotifications
 
 // Get notification strings from server, add to NB, and update display.
 async function getNotifications() {
-    const response = await fetch('/notifications', {
-        method: 'GET'
-    });
+    try {
+        const response = await fetch('/notifications', {
+            method: 'GET'
+        });
 
-    const notifications = await response.json();
-    if (notifications.length > 0) {
-        for (let notif of notifications) {
-            NB.addNotification(notif);
+        const notifications = await response.json();
+        if (notifications.length > 0) {
+            for (let notif of notifications) {
+                NB.addNotification(notif);
+            }
+            updateNB();
         }
-        updateNB();
+    }
+    catch (err) {
+        console.log(err);
     }
 }
 
