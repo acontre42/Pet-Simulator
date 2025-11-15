@@ -45,7 +45,7 @@ export default class Pet {
     // Getters
     getName() { return this.name; }
     isAlive() { return this.alive; }
-    isUnavailable() { return (this.status == RESTLESS || this.status == RUNAWAY) ? true : false; }
+    isUnavailable() { return (this.status == RESTLESS || this.status == RUNAWAY || this.status == SLEEPING) ? true : false; }
     getStatus() { return this.status; }
     getHunger() { return this.hunger; }
     getEnergy() { return this.energy; }
@@ -57,6 +57,7 @@ export default class Pet {
         const all = {
             alive: this.alive,
             status: this.status,
+            unavailable: this.isUnavailable(),
             stinky: this.hygiene < 4,
             hunger: this.hunger,
             energy: this.energy,
