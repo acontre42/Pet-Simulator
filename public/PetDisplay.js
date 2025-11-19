@@ -157,5 +157,5 @@ export function deceased() {
 
 // Display stink effect depending on if pet is stinky
 export function setStink(stinky) {
-    stinkImg.hidden = !stinky;
+    stinkImg.style.opacity = (stinky ? 1 : 0);
 }
