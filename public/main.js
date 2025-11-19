@@ -1,6 +1,7 @@
 "use strict";
 import * as NotificationManager from './NotificationManager.js';
 import * as PetDisplay from './PetDisplay.js';
+import {getPetName} from './PetName.js';
 
 // HTML Elements
 // Buttons
@@ -12,9 +13,7 @@ const batheButton = document.getElementById("bathe-button");
 const petButton = document.getElementById("pet-button");
 const playButton = document.getElementById("play-button");
 const clearButton = document.getElementById("clear-button");
-const renameButton = document.getElementById("rename-button");
 const saveButton = document.getElementById("save-button");
-const cancelButton = document.getElementById("cancel-button");
 // <P>
 const hungerP = document.getElementById("hunger");
 const energyP = document.getElementById("energy");
@@ -26,7 +25,6 @@ const funP = document.getElementById("fun");
 const foodSelect = document.getElementById("food-select");
 const playSelect = document.getElementById("play-select");
 const petSelect = document.getElementById("pet-select");
-const renameInput = document.getElementById("rename-input");
 
 // Pet Info Variables
 let name;
@@ -133,31 +131,6 @@ function disableSpecificButton(needCode) {
 }
 
 // DISPLAY-RELATED FUNCTIONS
-// Display input and buttons related to name change
-function showRenameElems() {
-    const renameElems = document.getElementsByClassName("rename");
-    for (let elem of renameElems) {
-        elem.hidden = false;
-    }
-    renameButton.hidden = true;
-    renameInput.focus();
-}
-// Hide input and buttons related to name change
-function hideRenameElems() {
-    renameInput.value = '';
-    const renameElems = document.getElementsByClassName("rename");
-    for (let elem of renameElems) {
-        elem.hidden = true;
-    }
-    renameButton.hidden = false;
-}
-// Update all elements classed as pet-name with pet name
-function updateNameDisplay() {
-    const elems = document.querySelectorAll('.pet-name');
-    for (let elem of elems) {
-        elem.textContent = name;
-    }
-}
 // Refreshes Need displays
 async function updateNeeds() {
     try {
@@ -257,45 +230,6 @@ function notifyLowNeeds(needs) {
         NotificationManager.notify(`${name} is bored and starting to feel restless...`);
     }
     priorNeeds.fun = needs.fun;
-}
-
-// NAME-RELATED FUNCTIONS
-async function getPetName() {
-    try {
-        const response = await fetch('/pet/name', {
-            method: 'GET'
-        });
-        const data = await response.json();
-        name = data.name;
-        updateNameDisplay();
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
-// Change pet's name if valid and successful
-async function rename() {
-    let newName = renameInput.value;
-    try {
-        const response = await fetch('/pet/name', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({name: newName})
-        });
-        const {result} = await response.json();
-        if (result) {
-            await getPetName();
-            hideRenameElems();
-        }
-        else {
-            alert('There was an error renaming your pet. Name must be between 1-10 characters and contain at least one letter.');
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
 }
 
 // PET CARE-RELATED FUNCTIONS
@@ -424,12 +358,10 @@ async function wakeUp() {
 
 
 // MAIN
-await getPetName();
+name = await getPetName();
 enableButtons(WAKE);
+saveButton.addEventListener('click', async () => name = await getPetName()); // Get pet name any time a rename attempt is made
 clearButton.addEventListener('click', NotificationManager.clearNB);
-renameButton.addEventListener('click', showRenameElems);
-cancelButton.addEventListener('click', hideRenameElems);
-saveButton.addEventListener('click', rename);
 
 await fetch('/pet/start', { // Start needs decay
     method: 'GET'
