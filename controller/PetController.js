@@ -15,6 +15,50 @@ function hungerFailure() { // Pause all intervals and set pet's alive attribute 
     pauseFill();
     pet.loss();
 }
+function socialFailure() { // Modified version of FILL_FUNCTIONS.socialize
+    if (!pet.isAlive() || pet.isUnavailable()) {
+        return;
+    }
+    notifications.push(`${pet.getName()} has gone to socialize with other wild aliens and will be back later.`);
+    FAILURE_COUNTS.social = 0; // Reset social fail count
+    clearCurrentFill(); // Clear fill, reset decay
+    clearInterval(DECAY_INTERVALS.social); // Stop social need decay
+    pet.setStatusRunaway(); // Status is set to runaway
+    let hangout = Pet.getMaxNeeds();
+    FILL_INTERVAL = setInterval(() => { // Gradually fill social need while interaction remains
+        if (hangout > 0) {
+            pet.alterSocial(1);
+            hangout--;
+        }
+        else { // Clear socialize interval and resume social decay
+            clearInterval(FILL_INTERVAL);
+            pet.setStatusNeutral();
+            DECAY_INTERVALS.social = setInterval(() => DECAY_FUNCTIONS.social(), DECAY_TIME.social);
+        }
+    }, FILL_TIME.socialize);
+}
+function funFailure() { // Modified version of FILL_FUNCTIONS.play
+    if (!pet.isAlive() || pet.isUnavailable()) {
+        return;
+    }
+    notifications.push(`${pet.getName()} has gotten the zoomies! He should calm down soon...`)
+    FAILURE_COUNTS.fun = 0; // Reset fun fail count
+    clearCurrentFill(); // Clear fill, reset decay
+    clearInterval(DECAY_INTERVALS.fun); // Stop fun need decay
+    pet.setStatusRestless(); // Status is set to restless
+    let playtime = Pet.getMaxNeeds();
+    FILL_INTERVAL = setInterval(() => { // Gradually fill fun need while playtime remains
+        if (playtime > 0) {
+            pet.alterFun(1);
+            playtime--;
+        }
+        else { // Clear play interval and resume fun decay
+            clearInterval(FILL_INTERVAL);
+            pet.setStatusNeutral();
+            DECAY_INTERVALS.fun = setInterval(() => DECAY_FUNCTIONS.fun(), DECAY_TIME.fun);
+        }
+    }, FILL_TIME.play);
+}
 
 
 // DECAY NEEDS
@@ -71,10 +115,9 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         pet.alterSocial(-1);
         if (pet.socialEmpty()) {
             FAILURE_COUNTS.social++;
-            if (FAILURE_COUNTS.social == MAX_FAILURE_SOCIAL) {
-                // *** TO DO: trigger social failure
+            if (FAILURE_COUNTS.social >= MAX_FAILURE_SOCIAL) {
                 console.log('SOCIAL FAILURE'); // *** DELETE
-                notifications.push(`${pet.getName()} has gone elsewhere for attention and will be back later.`);
+                socialFailure();
             }
         }
     },
@@ -82,10 +125,9 @@ const DECAY_FUNCTIONS = { // Holds functions that gradually decrement Pet needs
         pet.alterFun(-1);
         if (pet.funEmpty()) {
             FAILURE_COUNTS.fun++;
-            if (FAILURE_COUNTS.fun == MAX_FAILURE_FUN) {
-                // *** TO DO: fun failure
+            if (FAILURE_COUNTS.fun >= MAX_FAILURE_FUN) {
                 console.log('FUN FAILURE'); // *** DELETE
-                notifications.push(`${pet.getName()} has gotten the zoomies! He should calm down soon...`);
+                funFailure();
             }
         }
     },

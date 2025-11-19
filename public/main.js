@@ -189,20 +189,31 @@ async function updateNeeds() {
         const {stinky} = data;
         PetDisplay.setStink(stinky);
         // Update UI based on changes to current status
-        const {status} = data;
+        const {status, unavailable} = data;
         if (status !== priorStatus) {
             console.log('new status: ', status); // *** DELETE
             if (status == null) { // Pet was previously doing an activity, and is now back to neutral
                PetDisplay.neutral();
             }
-            if (status == 'sleeping') { // Pet was not previously sleeping, but now is. Code moved here to account for energy failures.
-                PetDisplay.sleeping();
+
+            if (unavailable) { // Pet's status is currently sleeping, runaway, or restless.
                 disableButtons();
-                enableSpecificButton(WAKE);
+                switch (status) {
+                    case 'sleeping':
+                        PetDisplay.sleeping();
+                        enableSpecificButton(WAKE);
+                        break;
+                    case 'runaway':
+                        PetDisplay.runaway();
+                        break;
+                    case 'restless':
+                        PetDisplay.restless();
+                        break;
+                }
             }
-            else if (priorStatus == 'sleeping') { // Pet was previously sleeping, but is now awake.
-                disableSpecificButton(WAKE);
+            else { // Pet is available and was previously sleeping, which means they're now awake.
                 enableButtons(WAKE);
+                disableSpecificButton(WAKE);
             }
         }
         priorStatus = status;

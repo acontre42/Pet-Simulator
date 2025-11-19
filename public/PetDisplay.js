@@ -5,6 +5,7 @@ const ACTIVE = "active";
 const UP_DOWN = "animateUpDown", LEFT_RIGHT = "animateLeftRight", CLOCKWISE = "animateClockwise", 
         SQUEEZE = "animateSqueeze", FETCH = "animateFetch", BACK_FORTH = "animateBackForth";
 const ANIMATION_CLASSES = [UP_DOWN, LEFT_RIGHT, CLOCKWISE, SQUEEZE, FETCH, BACK_FORTH];
+const RUN_AROUND = "animateRunAround", RUN_AROUND_STINK = "animateRunAroundStink";
 // <img>
 const activeImg = document.getElementById("active-img");
 const petImg = document.getElementById("pet-img");
@@ -34,6 +35,8 @@ export function clearActiveEffect() {
     for (let AC of ANIMATION_CLASSES) {
         activeImg.classList.remove(AC);
     }
+    petImg.classList.remove(RUN_AROUND);
+    stinkImg.classList.remove(RUN_AROUND_STINK);
 }
 
 // Set pet-img src based on status to match current activity.
@@ -54,6 +57,12 @@ function setPetImg(status) {
             break;
         case 'playing':
             url += 'Fun.png';
+            break;
+        case 'runaway':
+            url += 'Outhouse.png';//'Runaway.png'; // *** TO DO: add correct images
+            break;
+        case 'restless':
+            url += 'Fun.png';//'Restless.png'; // *** TO DO: add correct images
             break;
         default: url += 'Alien.png'; // Status: Neutral, Bathing
     }
@@ -129,6 +138,12 @@ export const playing = (index) => {
     setDisplay('playing', funP, url);
     activeImg.classList.add(animationClass);
 };
+export const runaway = setDisplay.bind(null, 'runaway', socialP, null);
+export function restless() {
+    setDisplay('restless', funP, null);
+    petImg.classList.add(RUN_AROUND);
+    stinkImg.classList.add(RUN_AROUND_STINK);
+}
 export function deceased() {
     const effects = document.getElementsByClassName("effects");
     for (let effect of effects) { // Hide all effects
