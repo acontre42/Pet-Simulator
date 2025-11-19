@@ -158,3 +158,17 @@ button, select {
     animation-direction: alternate;
     animation-iteration-count: infinite;
 }
+
+.animateRunAround {
+    animation: run-around;
+    animation-duration: 2.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.animateRunAroundStink {
+    animation: run-around-stink;
+    animation-duration: 2.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
