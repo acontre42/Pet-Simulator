@@ -59,10 +59,10 @@ function setPetImg(status) {
             url += 'Fun.png';
             break;
         case 'runaway':
-            url += 'Outhouse.png';//'Runaway.png'; // *** TO DO: add correct images
+            url += 'Runaway.png';
             break;
         case 'restless':
-            url += 'Fun.png';//'Restless.png'; // *** TO DO: add correct images
+            url += 'Restless.png';
             break;
         default: url += 'Alien.png'; // Status: Neutral, Bathing
     }
