@@ -145,10 +145,8 @@ export function restless() {
     stinkImg.classList.add(RUN_AROUND_STINK);
 }
 export function deceased() {
-    const effects = document.getElementsByClassName("effects");
-    for (let effect of effects) { // Hide all effects
-        effect.hidden = true;
-    }
+    clearActiveEffect();
+    setStink(false);
     for (let p of needsPArray) { // Return text to normal color
         p.classList.remove(ACTIVE);
     }

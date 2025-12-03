@@ -160,7 +160,8 @@ async function updateNeeds() {
         notifyLowNeeds(data);
         // Check if stinky
         const {stinky} = data;
-        PetDisplay.setStink(stinky);
+        (data.status == 'runaway' ? PetDisplay.setStink(false) : PetDisplay.setStink(stinky)); // Don't display stink fumes if alien is offscreen
+        //PetDisplay.setStink(stinky);
         // Update UI based on changes to current status
         const {status, unavailable} = data;
         if (status !== priorStatus) {
