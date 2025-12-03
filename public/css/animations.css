@@ -86,7 +86,7 @@
         transform: translate(225%, 0%); /* +100, 0 */
     }
     75% {
-        transform: translate(225%, -15%); /* +100, -15 */
+        transform: translate(225%, -10%); /* +100, -10 */
     }
     100% {
         transform: translate(125%, 0%);
@@ -110,7 +110,7 @@
         transform: translate(127%, -0.5%); /* +100, 0 */
     }
     75% {
-        transform: translate(127%, -15.5%); /* +100, -15 */
+        transform: translate(127%, -10.5%); /* +100, -10 */
     }
     100% {
         transform: translate(27%, -0.5%);
