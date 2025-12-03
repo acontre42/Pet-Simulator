@@ -20,6 +20,8 @@ footer {
     bottom: 0;
 }
 
+/* PET DISPLAY */
+
 #pet-display-div {
     max-width: 100%;
     height: auto;
@@ -59,8 +61,14 @@ footer {
     transform: translate(25%, -5%);
 }
 
+/* INTERACTIVE DISPLAY */
+
 button, select {
     font-family: 'Lucida Console';
+}
+
+.active {
+    color: green;
 }
 
 .unclickable {
@@ -68,16 +76,28 @@ button, select {
     text-decoration: line-through;
 }
 
-#pet-needs-div, #interact-buttons-div {
-    float: left;
-}
-
-#interact-div {
+#user-div {
     height: 400px;
 }
 
-#interact-div div {
+#user-div h2 {
+    padding: 0px;
+    margin: 0px;
+}
+
+#needs-div, #interact-div {
+    float: left;
+    margin: 2px;
+    min-width: 15%;
+}
+
+#needs-div div, #interact-div div {
     margin: 5px;
+    padding: 4px;
+}
+
+#pet-needs-div, #interact-buttons-div {
+    border: 1px solid white;
 }
 
 #notification-div {
@@ -85,11 +105,6 @@ button, select {
     width: 50%;
     float: right;
     position: relative;
-}
-
-#notification-div h2 {
-    padding: 0px;
-    margin: 0px;
 }
 
 #clear-button {
@@ -111,9 +126,7 @@ button, select {
     padding: 0.5rem;
 }
 
-.active {
-    color: green;
-}
+/* ANIMATED CLASSES */
 
 .animateUpDown {
     animation-name: up-down;
