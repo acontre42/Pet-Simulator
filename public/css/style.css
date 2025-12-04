@@ -77,7 +77,7 @@ button, select {
 }
 
 #user-div {
-    height: 400px;
+    height: 275px;
 }
 
 #user-div h2 {
@@ -85,19 +85,28 @@ button, select {
     margin: 0px;
 }
 
-#needs-div, #interact-div {
+.container {
     float: left;
-    margin: 2px;
+    margin: 0px 4px;
     min-width: 15%;
 }
 
-#needs-div div, #interact-div div {
+.container div {
     margin: 5px;
     padding: 4px;
 }
 
 #pet-needs-div, #interact-buttons-div {
     border: 1px solid white;
+    height: 200px;
+}
+
+#pet-needs-div p {
+    margin-top: 7px;
+}
+
+#interact-buttons-div div {
+    margin-top: 2px;
 }
 
 #notification-div {
@@ -117,6 +126,7 @@ button, select {
     height: 85%;
     overflow-y: scroll;
     float: right;
+    margin: 2px;
 }
 
 .notification {
