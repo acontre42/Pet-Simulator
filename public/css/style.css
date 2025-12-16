@@ -4,6 +4,11 @@ html {
     font-family:'Lucida Console';
 }
 
+h2 {
+    padding: 0px 0px 0px 2px;
+    margin: 0px;
+}
+
 #header {
     text-align: center;
     width: 100%;
@@ -84,11 +89,6 @@ button, select {
     flex-wrap: wrap;
 }
 
-#user-div h2 {
-    padding: 0px;
-    margin: 0px;
-}
-
 .container div {
     margin: 5px;
     padding: 4px;
@@ -111,10 +111,12 @@ button, select {
     height: 100%;
     min-width: 50%;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 #clear-button {
-    float: right;
+    align-self: flex-end;
 }
 
 #notification-box {
@@ -129,6 +131,7 @@ button, select {
     border-color: white;
     border-style: dashed;
     padding: 0.5rem;
+    margin: 0;
 }
 
 /* ANIMATED CLASSES */
