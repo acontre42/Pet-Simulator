@@ -4,9 +4,23 @@ html {
     font-family:'Lucida Console';
 }
 
+h1 {
+    margin: 8px 0px;
+}
+
 h2 {
     padding: 0px 0px 0px 2px;
     margin: 0px;
+}
+
+button {
+    background-color: rgb(37, 37, 37);
+    color: white;
+}
+
+select {
+    background-color: black;
+    color: white;
 }
 
 #header {
@@ -24,6 +38,10 @@ footer {
     width: 100%;
     position: relative;
     bottom: 0;
+}
+
+#pet-name-div {
+    letter-spacing: 2px;
 }
 
 /* PET DISPLAY */
@@ -80,6 +98,7 @@ button, select {
 .unclickable {
     cursor: default;
     text-decoration: line-through;
+    text-decoration-color: red;
 }
 
 #user-div {
