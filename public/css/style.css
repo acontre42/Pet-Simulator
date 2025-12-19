@@ -114,6 +114,7 @@ button, select {
 
 #notification-div {
     min-height: 250px;
+    max-height: 275px;
     min-width: 48%;
     position: relative;
     display: flex;
